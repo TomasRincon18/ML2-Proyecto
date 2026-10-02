@@ -1,0 +1,2 @@
+Entrega2/data/raw/*.csv filter=lfs diff=lfs merge=lfs -text
+Entrega2/data/processed/*.csv filter=lfs diff=lfs merge=lfs -text

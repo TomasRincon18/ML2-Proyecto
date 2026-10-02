@@ -1,0 +1,27 @@
+Total de filas a descargar: 6,390,971
+  filas ~ 250,005 | paginas 5 | 45s
+  filas ~ 500,010 | paginas 10 | 91s
+  filas ~ 750,015 | paginas 15 | 139s
+  filas ~ 1,000,020 | paginas 20 | 180s
+  filas ~ 1,250,025 | paginas 25 | 221s
+  filas ~ 1,500,030 | paginas 30 | 254s
+  filas ~ 1,750,035 | paginas 35 | 312s
+  filas ~ 2,000,040 | paginas 40 | 349s
+  filas ~ 2,250,045 | paginas 45 | 397s
+  filas ~ 2,500,050 | paginas 50 | 442s
+  filas ~ 2,750,055 | paginas 55 | 500s
+  filas ~ 3,000,060 | paginas 60 | 567s
+  filas ~ 3,250,065 | paginas 65 | 621s
+  filas ~ 3,500,070 | paginas 70 | 674s
+  filas ~ 3,750,075 | paginas 75 | 723s
+  filas ~ 4,000,080 | paginas 80 | 770s
+  filas ~ 4,250,085 | paginas 85 | 816s
+  filas ~ 4,500,090 | paginas 90 | 888s
+  filas ~ 4,750,095 | paginas 95 | 942s
+  filas ~ 5,000,100 | paginas 100 | 999s
+  filas ~ 5,250,105 | paginas 105 | 1057s
+  filas ~ 5,500,110 | paginas 110 | 1109s
+  filas ~ 5,750,115 | paginas 115 | 1150s
+  filas ~ 6,000,120 | paginas 120 | 1191s
+  filas ~ 6,250,125 | paginas 125 | 1241s
+Descarga completa: 6,390,972 filas, 538.6 MB, 1276s
