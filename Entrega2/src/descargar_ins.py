@@ -1,7 +1,7 @@
 """
 Descarga el dataset de casos positivos de COVID-19 en Colombia (INS)
-desde datos.gov.co usando la API SODA, seleccionando solo las columnas
-necesarias para el proyecto y paginando hasta obtener todas las filas.
+desde datos.gov.co usando la API SODA, seleccionando solo las 9 columnas
+necesarias para el proyecto y paginando ordenadamente por :id.
 
 Columnas seleccionadas (9):
   fecha_de_notificaci_n, edad, unidad_medida, sexo, departamento_nom,
@@ -9,7 +9,6 @@ Columnas seleccionadas (9):
 """
 import os
 import time
-
 import requests
 
 BASE = "https://www.datos.gov.co/resource/gt2j-8ykr.csv"
@@ -23,46 +22,59 @@ OUT = os.path.abspath(OUT)
 
 
 def _total_rows():
-    r = requests.get(
-        "https://www.datos.gov.co/resource/gt2j-8ykr.json?$select=count(*)&$limit=1",
-        timeout=60,
-    )
-    return int(r.json()[0]["count"])
+    try:
+        r = requests.get(
+            "https://www.datos.gov.co/resource/gt2j-8ykr.json?$select=count(*)&$limit=1",
+            timeout=60,
+        )
+        return int(r.json()[0]["count"])
+    except Exception as e:
+        print(f"No se pudo obtener el conteo total previo: {e}")
+        return None
 
 
 def main():
     os.makedirs(os.path.dirname(OUT), exist_ok=True)
     offset = 0
-    total = None
+    total = _total_rows()
+    if total:
+        print(f"Total de registros a descargar: {total:,}", flush=True)
+
     paginas = 0
     t0 = time.time()
 
     with open(OUT, "w", encoding="utf-8") as f:
         while True:
-            url = f"{BASE}?$select={COLUMNAS}&$limit={LIMIT}&$offset={offset}"
+            # Ordenamiento por :id para garantizar paginación estable y sin duplicados
+            url = f"{BASE}?$select={COLUMNAS}&$limit={LIMIT}&$offset={offset}&$order=:id"
             resp = requests.get(url, timeout=300)
             resp.raise_for_status()
-            text = resp.text
+            lines = resp.text.splitlines(True)
+
+            if len(lines) <= 1:
+                break
 
             if offset == 0:
-                f.write(text)
+                f.writelines(lines)
             else:
-                f.writelines(text.splitlines(True)[1:])
+                f.writelines(lines[1:])  # Omitir cabecera en páginas subsecuentes
 
-            n = text.count("\n")
-            if n <= 1:
-                break
-            if total is None:
-                total = _total_rows()
-                print(f"Total de filas a descargar: {total:,}", flush=True)
-            offset += n
+            rows_downloaded = len(lines) - 1
+            offset += rows_downloaded
             paginas += 1
-            if paginas % 5 == 0:
-                print(f"  filas ~ {offset:,} | paginas {paginas} | {time.time()-t0:.0f}s", flush=True)
-            if n < LIMIT:
+
+            if paginas % 10 == 0 or rows_downloaded < LIMIT:
+                porcentaje = f"({offset/total*100:.1f}%)" if total else ""
+                print(f"  Descargadas {offset:,} filas {porcentaje} | {paginas} páginas | {time.time()-t0:.0f}s", flush=True)
+
+            if rows_downloaded < LIMIT:
                 break
 
-    print(f"Descarga completa: {offset:,} filas, {os.path.getsize(OUT)/1e6:.1f} MB, {time.time()-t0:.0f}s", flush=True)
+    print(f"\nDescarga finalizada con éxito:")
+    print(f"  Archivo: {OUT}")
+    print(f"  Total filas descargadas: {offset:,}")
+    print(f"  Tamaño: {os.path.getsize(OUT)/1e6:.1f} MB")
+    print(f"  Tiempo total: {time.time()-t0:.1f}s", flush=True)
 
 
 if __name__ == "__main__":

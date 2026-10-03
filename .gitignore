@@ -1,0 +1,24 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Datos crudos masivos (descargables por script)
+**/data/raw/*.csv
+**/data/raw/*.log
+**/data/raw/casos_covid_colombia.csv
+**/data/raw/download.log
+
+# Archivos de sistema
+.DS_Store
+Thumbs.db

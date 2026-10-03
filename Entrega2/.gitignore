@@ -2,17 +2,23 @@
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+
+# Entornos virtuales
+venv/
+.venv/
+env/
+*.egg-info/
 
 # Jupyter
 .ipynb_checkpoints/
 
-# Entornos
-venv/
-.venv/
-*.egg-info/
+# Archivos pesados de datos crudos (descargables vía src/descargar_ins.py)
+data/raw/*.csv
+data/raw/*.log
+data/raw/casos_covid_colombia.csv
+data/raw/download.log
 
-# Sistema
+# Archivos temporales de sistema
 .DS_Store
-
-# Logs
-Entrega2/data/raw/download.log
+Thumbs.db

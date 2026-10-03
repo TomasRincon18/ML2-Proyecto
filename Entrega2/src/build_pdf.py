@@ -1,65 +1,193 @@
 import os
+import subprocess
 import markdown
-from weasyprint import HTML
+import pypdf
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MD = os.path.join(BASE, "informe", "informe_entrega2.md")
-OUT = os.path.join(BASE, "informe", "informe_entrega2.pdf")
+MD_PATH = os.path.join(BASE, "informe", "informe_entrega2.md")
+HTML_PATH = os.path.join(BASE, "informe", "informe_entrega2.html")
+PDF_PATH = os.path.join(BASE, "informe", "informe_entrega2.pdf")
 
-with open(MD, encoding="utf-8") as f:
+with open(MD_PATH, encoding="utf-8") as f:
     text = f.read()
 
+# Convertir Markdown a HTML
 body = markdown.markdown(
     text,
     extensions=["tables", "fenced_code", "attr_list", "sane_lists"],
     output_format="html5",
 )
 
-CSS = """
+CUSTOM_CSS = """
 @page {
-    size: A4;
-    margin: 2cm 2cm 2.2cm 2cm;
-    @bottom-center { content: counter(page) " / " counter(pages); font-size: 9pt; color: #666; }
+    size: letter;
+    margin: 1.2cm 1.4cm 1.3cm 1.4cm;
 }
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
 body {
-    font-family: 'DejaVu Sans', 'Helvetica', sans-serif;
-    font-size: 10.5pt;
-    line-height: 1.45;
-    color: #1a1a1a;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 8.2pt;
+    line-height: 1.28;
+    color: #212529;
+    background-color: #ffffff;
 }
+
 h1 {
-    font-size: 16pt;
-    text-align: center;
-    margin: 0.6em 0 0.3em 0;
-    color: #0b2545;
-    page-break-before: always;
+    font-size: 10.5pt;
+    color: #1d3557;
+    margin-top: 0.6em;
+    margin-bottom: 0.2em;
+    border-bottom: 1px solid #457b9d;
+    padding-bottom: 1px;
+    font-weight: 700;
+    break-after: avoid;
+    page-break-after: avoid;
 }
-h1:first-of-type { page-break-before: avoid; }
+
 h2 {
-    font-size: 12.5pt;
-    color: #0b2545;
-    border-bottom: 1px solid #ccc;
-    padding-bottom: 2px;
-    margin-top: 1.2em;
+    font-size: 9.2pt;
+    color: #457b9d;
+    margin-top: 0.5em;
+    margin-bottom: 0.15em;
+    font-weight: 600;
+    break-after: avoid;
+    page-break-after: avoid;
 }
-h3 { font-size: 11pt; color: #134074; }
-p { text-align: justify; margin: 0.5em 0; }
-strong { color: #0b2545; }
+
+h3 {
+    font-size: 8.5pt;
+    color: #1d3557;
+    margin-top: 0.4em;
+    margin-bottom: 0.12em;
+    font-weight: 600;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+p {
+    text-align: justify;
+    margin-top: 0.22em;
+    margin-bottom: 0.22em;
+    text-justify: inter-word;
+}
+
+ul, ol {
+    margin-top: 0.18em;
+    margin-bottom: 0.18em;
+    padding-left: 1.2em;
+}
+
+li {
+    margin-bottom: 0.08em;
+    text-align: justify;
+}
+
+strong {
+    color: #0b1d3a;
+    font-weight: 700;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;
-    margin: 0.7em 0;
-    font-size: 9pt;
+    margin: 0.4em auto;
+    font-size: 7.2pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
 }
-th, td { border: 1px solid #bbb; padding: 4px 7px; text-align: center; }
-th { background: #eef2f7; color: #0b2545; }
-img { display: block; margin: 0.8em auto; max-width: 95%; max-height: 15cm; }
-hr { border: none; border-top: 1px solid #999; margin: 1.5em 0; }
-code { font-family: 'DejaVu Sans Mono', monospace; font-size: 9pt; background: #f2f2f2; padding: 0 2px; }
+
+th, td {
+    border: 1px solid #ced4da;
+    padding: 2.2px 4px;
+    text-align: center;
+}
+
+th {
+    background-color: #e9ecef;
+    color: #1d3557;
+    font-weight: 700;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+img {
+    display: block;
+    margin: 0.3em auto;
+    max-width: 78%;
+    max-height: 4.1cm;
+    object-fit: contain;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 0.45em 0;
+}
+
+code {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 7.4pt;
+    background-color: #f1f3f5;
+    padding: 1px 3px;
+    border-radius: 2px;
+}
 """
 
-html = f"<html><head><meta charset='utf-8'></head><body>{body}</body></html>"
-HTML(string=html, base_url=os.path.join(BASE, "informe")).write_pdf(OUT, stylesheets=[__import__("weasyprint").CSS(string=CSS)])
+html_content = f"""<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Informe Entrega 2 — Machine Learning II</title>
+    <style>
+    {CUSTOM_CSS}
+    </style>
+</head>
+<body>
+{body}
+</body>
+</html>
+"""
 
-print("PDF generado en:", OUT)
-print("Tamaño:", round(os.path.getsize(OUT) / 1024), "KB")
+with open(HTML_PATH, "w", encoding="utf-8") as f:
+    f.write(html_content)
+
+# Compilación a PDF vía Headless Microsoft Edge (estándar nativo de Windows)
+edge_exe = r"C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"
+if not os.path.exists(edge_exe):
+    edge_exe = r"C:\Program Files\Microsoft\Edge\Application\msedge.exe"
+
+cmd = [
+    edge_exe,
+    "--headless",
+    "--disable-gpu",
+    "--run-all-compositor-stages-before-draw",
+    f"--print-to-pdf={PDF_PATH}",
+    HTML_PATH
+]
+
+print("Compilando PDF con motor Chromium (Microsoft Edge)...")
+subprocess.run(cmd, check=True)
+
+reader = pypdf.PdfReader(PDF_PATH)
+num_pages = len(reader.pages)
+
+print(f"\n==========================================")
+print(f"PDF generado con éxito: {PDF_PATH}")
+print(f"Número total de páginas: {num_pages}")
+print(f"Tamaño del archivo: {round(os.path.getsize(PDF_PATH) / 1024)} KB")
+if 3 <= num_pages <= 5:
+    print(f"ESTADO: CUMPLE ESTRICTAMENTE LA GUÍA (3 a 5 páginas)")
+else:
+    print(f"ADVERTENCIA: Número de páginas fuera de rango ({num_pages})")
+print(f"==========================================")

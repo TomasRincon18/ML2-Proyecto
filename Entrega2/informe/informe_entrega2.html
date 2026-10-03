@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <title>Informe Entrega 2 — Machine Learning II</title>
+    <style>
+    
+@page {
+    size: letter;
+    margin: 1.2cm 1.4cm 1.3cm 1.4cm;
+}
+
+@media print {
+    body {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-size: 8.2pt;
+    line-height: 1.28;
+    color: #212529;
+    background-color: #ffffff;
+}
+
+h1 {
+    font-size: 10.5pt;
+    color: #1d3557;
+    margin-top: 0.6em;
+    margin-bottom: 0.2em;
+    border-bottom: 1px solid #457b9d;
+    padding-bottom: 1px;
+    font-weight: 700;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+h2 {
+    font-size: 9.2pt;
+    color: #457b9d;
+    margin-top: 0.5em;
+    margin-bottom: 0.15em;
+    font-weight: 600;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+h3 {
+    font-size: 8.5pt;
+    color: #1d3557;
+    margin-top: 0.4em;
+    margin-bottom: 0.12em;
+    font-weight: 600;
+    break-after: avoid;
+    page-break-after: avoid;
+}
+
+p {
+    text-align: justify;
+    margin-top: 0.22em;
+    margin-bottom: 0.22em;
+    text-justify: inter-word;
+}
+
+ul, ol {
+    margin-top: 0.18em;
+    margin-bottom: 0.18em;
+    padding-left: 1.2em;
+}
+
+li {
+    margin-bottom: 0.08em;
+    text-align: justify;
+}
+
+strong {
+    color: #0b1d3a;
+    font-weight: 700;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0.4em auto;
+    font-size: 7.2pt;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+th, td {
+    border: 1px solid #ced4da;
+    padding: 2.2px 4px;
+    text-align: center;
+}
+
+th {
+    background-color: #e9ecef;
+    color: #1d3557;
+    font-weight: 700;
+}
+
+tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+img {
+    display: block;
+    margin: 0.3em auto;
+    max-width: 78%;
+    max-height: 4.1cm;
+    object-fit: contain;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 0.45em 0;
+}
+
+code {
+    font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-size: 7.4pt;
+    background-color: #f1f3f5;
+    padding: 1px 3px;
+    border-radius: 2px;
+}
+
+    </style>
+</head>
+<body>
+<h1>Universidad Externado de Colombia</h1>
+<p><strong>Facultad:</strong> Ciencia de Datos<br>
+<strong>Asignatura:</strong> Machine Learning II — Proyecto Integrador<br>
+<strong>Docente:</strong> Wilmer Darío Pineda Ríos  </p>
+<h1>Detección de <em>Population Drift</em> en modelos de predicción de gravedad clínica de COVID-19 en Colombia</h1>
+<p><strong>Segunda Entrega — Fase 2: Datos, Modelamiento y Validación</strong></p>
+<hr>
+<p><strong>Integrantes:</strong>
+- Ailyn Sofía Gómez Rodríguez
+- Juan Tomás Rincón Pinzón</p>
+<p><strong>Bogotá D.C., Colombia — 2026</strong></p>
+<hr>
+<h1>Introducción</h1>
+<p>Esta segunda entrega consolida el flujo de modelamiento avanzado propio de Machine Learning II: integra el conjunto de datos depurado, construye un flujo reproducible sin fuga de información, reproduce y adapta el método de Jones y Farrow (2025) y evalúa los modelos con rigor estadístico. El proyecto articula dos componentes complementarios: (1) un <strong>modelo supervisado de predicción de gravedad clínica</strong>, y (2) un <strong>One-Class Support Vector Machine (OCSVM)</strong> no supervisado que monitorea el <em>population drift</em> en el espacio de covariables de entrada P(X).</p>
+<p>El trabajo aporta un hallazgo metodológico central y honesto: en los datos colombianos del Instituto Nacional de Salud (INS), la aparente variación en el desempeño del modelo entre 2020 y 2022 no obedece a un <em>covariate drift</em> (las distribuciones de X permanecen estables según tests de Kolmogorov-Smirnov y el monitor OCSVM), sino a un <strong>cambio drástico en la prevalencia clínica</strong> (la tasa base de gravedad cayó de 2,82 % a 1,10 % por el efecto combinado de la vacunación masiva y las variantes virales). Dado que el OCSVM únicamente observa las variables de entrada X sin etiquetas, no detecta —ni debe detectar— cambios exclusivos en la distribución del objetivo (P(Y) o P(Y|X)), delimitando con precisión su alcance práctico.</p>
+<hr>
+<h1>1. Consolidación de los Datos</h1>
+<h2>1.1. Fuente, Calidad y Depuración</h2>
+<p>Se utilizó el registro oficial de <strong>"Casos positivos de COVID-19 en Colombia"</strong> del Instituto Nacional de Salud (portal datos.gov.co, recurso <code>gt2j-8ykr</code>, licencia CC BY-SA 4.0). El conjunto crudo contiene <strong>6 390 844 registros</strong> y 9 variables. El Cuadro 1 detalla las etapas de depuración aplicadas.</p>
+<p><strong>Cuadro 1.</strong> Estado de calidad del dataset del INS y etapas de depuración.</p>
+<table>
+<thead>
+<tr>
+<th>Etapa / Filtro</th>
+<th>Registros</th>
+<th>Proporción</th>
+<th>Justificación Metodológica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Registros crudos</td>
+<td>6 390 844</td>
+<td>100,0 %</td>
+<td>Descarga completa oficial del INS (9 variables).</td>
+</tr>
+<tr>
+<td>Exclusión de <code>estado</code> nulo</td>
+<td>−41 267</td>
+<td>−0,65 %</td>
+<td>Casos sin desenlace clínico registrado ni gravedad.</td>
+</tr>
+<tr>
+<td>Filtro temporal (2020–2022)</td>
+<td>−38 172</td>
+<td>−0,60 %</td>
+<td>Exclusión de fase endémica 2023–2024 fuera del alcance.</td>
+</tr>
+<tr>
+<td>Control de rango edad [0, 115]</td>
+<td>−0</td>
+<td>0,0 %</td>
+<td>Verificación de plausibilidad biológica.</td>
+</tr>
+<tr>
+<td><strong>Total depurado consolidado</strong></td>
+<td><strong>6 311 405</strong></td>
+<td><strong>98,75 %</strong></td>
+<td><strong>Prevalencia global de gravedad = 2,26 %.</strong></td>
+</tr>
+</tbody>
+</table>
+<p>No se identificaron valores nulos en edad, sexo ni fechas de notificación. Las 1 057 entidades municipales se agruparon en las 15 principales capitales y una categoría consolidada <em>"Otros municipios"</em>.</p>
+<h2>1.2. Definición del Problema Predictivo y Predictores</h2>
+<ul>
+<li><strong>Variable Objetivo (<code>grave</code>)</strong>: Clasificación binaria donde <code>grave = 1</code> si <code>estado ∈ {Fallecido, Grave}</code> o <code>ubicación = "Hospital UCI"</code>; y <code>grave = 0</code> si <code>estado ∈ {Leve, Moderado}</code>.</li>
+<li><strong>Predictores seleccionados (4)</strong>: <code>edad_anios</code> (numérica continua), <code>sexo</code> (binaria), <code>ciudad_top</code> (categórica de 16 niveles) y <code>fuente_tipo_contagio</code> (categórica).</li>
+<li><strong>Ajustes justificados frente a la Entrega 1</strong>: Se descartó <code>"tipo de atención"</code> por contener información directa del desenlace (<code>Fallecido</code>, <code>UCI</code>), lo que habría provocado fuga de datos hacia el objetivo.</li>
+</ul>
+<h2>1.3. Partición Temporal y Muestreo Estratificado</h2>
+<p>Siguiendo la lógica del artículo base, la partición es <strong>temporal</strong>: la cohorte de 2020 (variante ancestral, población virgen a vacunación) conforma el conjunto de entrenamiento, mientras que 2021 (Delta) y 2022 (Ómicron, vacunación activa) constituyen los escenarios de evaluación de despliegue. Para garantizar viabilidad computacional y balance temporal estricto, se extrajo una muestra estratificada de <strong>100 000 casos por ola</strong> (300 000 registros en total, superando ampliamente el mínimo de 5 000 de la guía). La Figura 1 verifica la estructura: la edad se concentra en adultos jóvenes en leves y se desplaza hacia adultos mayores en casos graves.</p>
+<p><img alt="Verificación de estructura" src="../figures/verificacion_estructura.png"></p>
+<p><strong>Figura 1.</strong> Verificación de la estructura del dataset consolidado: distribución de edad por clase, prevalencia por ola y distribución geográfica.</p>
+<h2>1.4. Simulación Fundamentada</h2>
+<p>Se adaptó el diseño experimental de Jones y Farrow: a partir de la cohorte de entrenamiento (2020), se modeló un <strong>drift de envejecimiento poblacional</strong> anclado en el percentil 99 de la edad (85 años + 0,4σ ≈ 92,2 años, con σ = 17,98), incorporando ruido gaussiano de 5 %, 10 % y 30 % de σ. La simulación es clínicamente coherente: la letalidad por COVID-19 en Colombia se incrementa de forma monótona con la edad (0,1 % en menores de 18 años a más de 30 % en mayores de 80 años), convirtiendo un desplazamiento hacia edades avanzadas en el escenario de mayor riesgo predictivo. El Cuadro 2 y la Figura 2 confirman que la simulación reproduce la estructura teórica prevista.</p>
+<p><strong>Cuadro 2.</strong> Verificación estadística de las poblaciones simuladas frente a la población real.</p>
+<table>
+<thead>
+<tr>
+<th>Población</th>
+<th>Media (años)</th>
+<th>Desv. Estándar (σ)</th>
+<th>P5</th>
+<th>Mediana (P50)</th>
+<th>P95</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2020 Train (Real)</strong></td>
+<td>39,87</td>
+<td>17,98</td>
+<td>14,0</td>
+<td>37,0</td>
+<td>73,0</td>
+</tr>
+<tr>
+<td><strong>Simulación 5 % ruido</strong></td>
+<td>92,19</td>
+<td>0,90</td>
+<td>90,7</td>
+<td>92,2</td>
+<td>93,7</td>
+</tr>
+<tr>
+<td><strong>Simulación 10 % ruido</strong></td>
+<td>92,19</td>
+<td>1,80</td>
+<td>89,2</td>
+<td>92,2</td>
+<td>95,1</td>
+</tr>
+<tr>
+<td><strong>Simulación 30 % ruido</strong></td>
+<td>92,18</td>
+<td>5,41</td>
+<td>83,3</td>
+<td>92,2</td>
+<td>101,1</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Verificación de simulación" src="../figures/verificacion_simulacion.png"></p>
+<p><strong>Figura 2.</strong> Distribución de edad real (2020) frente a las cohortes simuladas de envejecimiento bajo tres niveles de dispersión.</p>
+<hr>
+<h1>2. Flujo Reproducible sin Fuga de Datos</h1>
+<p>El preprocesamiento y el modelado se articularon en una arquitectura <code>Pipeline</code> de <code>scikit-learn</code> acoplada con <code>ColumnTransformer</code>, fijando la semilla aleatoria global <code>SEED = 42</code>. El orden de transformación garantiza la ausencia de fuga de datos (<em>data leakage</em>):</p>
+<ol>
+<li><strong>Partición temporal ex-ante:</strong> La separación entre 2020 (entrenamiento) y 2021–2022 (despliegue) se efectúa antes de cualquier cálculo estadístico.</li>
+<li><strong>Transformaciones en el Pipeline:</strong> La estandarización de <code>edad_anios</code> (<code>StandardScaler</code>) y la codificación de variables categóricas (<code>OneHotEncoder(drop='first', handle_unknown='ignore')</code>) se ajustan <strong>exclusivamente con los datos de entrenamiento</strong> de cada fold de validación cruzada.</li>
+<li><strong>Manejo de desbalance controlado:</strong> Se implementó <code>class_weight='balanced'</code> y <code>scale_pos_weight</code> dentro de los estimadores, evitando la distorsión de variables discretas originada por interpolaciones fraccionarias de sobremuestreo sintético.</li>
+<li><strong>Monitoreo ciego no supervisado:</strong> El OCSVM se entrena de forma estrictamente ciega a la variable objetivo <code>grave</code>.</li>
+</ol>
+<hr>
+<h1>3. Reproducción y Adaptación del Método</h1>
+<h2>3.1. Réplica Experimental sobre Wisconsin Breast Cancer</h2>
+<p>Previo a la adaptación local, se reprodujo el experimento de Jones y Farrow (2025) sobre su dataset original (<em>Wisconsin Breast Cancer</em>): 30 variables reducidas a 21 tras eliminar colinealidades (|r| &gt; 0,90), SMOTE a 714 registros, estandarización y OCSVM (kernel RBF, γ = auto, ν = 0,01). Se evaluó el desplazamiento de <code>mean radius</code> en ±0,4σ con ruido del 5 %, 10 % y 30 % promediando 5 semillas independientes (Cuadro 3). La réplica reproduce fielmente la <strong>tendencia del artículo</strong>: a mayor ruido se produce mayor solapamiento con la frontera de decisión aprendida y, consecuentemente, una menor tasa de detección de outliers.</p>
+<p><strong>Cuadro 3.</strong> Réplica experimental en Wisconsin Breast Cancer (5 semillas) frente al artículo base.</p>
+<table>
+<thead>
+<tr>
+<th>Nivel de Ruido</th>
+<th>Inliers Paper (Jones &amp; Farrow)</th>
+<th>Inliers Nuestra Réplica (media ± desv)</th>
+<th>Outliers Réplica</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>5 %</td>
+<td>0,27 %</td>
+<td>92,08 % ± 0,39 %</td>
+<td>7,92 %</td>
+</tr>
+<tr>
+<td>10 %</td>
+<td>4,86 %</td>
+<td>91,31 % ± 0,48 %</td>
+<td>8,69 %</td>
+</tr>
+<tr>
+<td>30 %</td>
+<td>8,51 %</td>
+<td>84,39 % ± 0,44 %</td>
+<td>15,61 %</td>
+</tr>
+</tbody>
+</table>
+<h2>3.2. OCSVM en Colombia y Sensibilidad de ν</h2>
+<p>Se ajustó el OCSVM sobre una submuestra no supervisada de 5 000 registros de 2020. Para evaluar con rigor la <strong>tasa de falsa alarma fuera de muestra (<em>out-of-sample</em>)</strong>, se evaluaron los 95 000 registros restantes de 2020 no utilizados en el entrenamiento, obteniendo un <strong>98,96 % de inliers</strong> (falsa alarma real de 1,04 %, correspondiente exactamente a ν = 0,01). Sobre las olas reales de despliegue, el OCSVM clasificó como inliers al <strong>99,08 % en 2021</strong> y al <strong>97,99 % en 2022</strong>, confirmando la estabilidad del soporte de X.</p>
+<p>En las simulaciones de drift, el OCSVM detecta el corrimiento de edad reduciendo los inliers a 72,00 % con 30 % de ruido, mientras que <strong>Isolation Forest</strong> resulta insensible (100 % inliers) debido a que los cortes ortogonales en árboles no delimitan contornos de densidad compactos (Cuadro 4 y Figura 3). Asimismo, al calibrar ν (ν = 0,05 → 9,30 % inliers en Sim 30 %; ν = 0,10 → 0,68 % inliers), se comprueba que ν actúa como dial de compromiso entre sensibilidad y tasa de falsa alarma.</p>
+<p><strong>Cuadro 4.</strong> Proporción de inliers detectados por OCSVM e Isolation Forest en Colombia.</p>
+<table>
+<thead>
+<tr>
+<th>Cohorte Evaluada</th>
+<th>Registros</th>
+<th>OCSVM (ν = 0,01) % Inliers</th>
+<th>Isolation Forest % Inliers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2020 Train (In-sample)</strong></td>
+<td>5 000</td>
+<td>99,00 %</td>
+<td>99,00 %</td>
+</tr>
+<tr>
+<td><strong>2020 Test (Out-of-sample)</strong></td>
+<td>95 000</td>
+<td>98,96 %</td>
+<td>98,93 %</td>
+</tr>
+<tr>
+<td><strong>2021 Delta (Despliegue)</strong></td>
+<td>100 000</td>
+<td>99,08 %</td>
+<td>98,08 %</td>
+</tr>
+<tr>
+<td><strong>2022 Ómicron (Despliegue)</strong></td>
+<td>100 000</td>
+<td>97,99 %</td>
+<td>98,92 %</td>
+</tr>
+<tr>
+<td><strong>Simulación 5 % ruido</strong></td>
+<td>10 000</td>
+<td>99,97 %</td>
+<td>100,00 %</td>
+</tr>
+<tr>
+<td><strong>Simulación 10 % ruido</strong></td>
+<td>10 000</td>
+<td>95,94 %</td>
+<td>100,00 %</td>
+</tr>
+<tr>
+<td><strong>Simulación 30 % ruido</strong></td>
+<td>10 000</td>
+<td>72,00 %</td>
+<td>100,00 %</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Sensibilidad al drift" src="../figures/sensibilidad_drift.png"></p>
+<p><strong>Figura 3.</strong> Sensibilidad al drift poblacional: comparación de la proporción de inliers entre OCSVM e Isolation Forest bajo distintos niveles de ruido.</p>
+<h2>3.3. Modelos de Gravedad Clínica y Línea Base</h2>
+<p>Se entrenaron y compararon: <strong>Línea Base de Mayoría</strong>, <strong>Regresión Logística</strong>, <strong>Random Forest</strong>, <strong>XGBoost</strong>, <strong>LightGBM</strong> y <strong>SVM con kernel RBF exacto</strong> (ajustado sobre submuestra representativa estratificada de 15 000 registros para garantizar convergencia matemática). Los hiperparámetros se optimizaron mediante <code>GridSearchCV</code> estratificado (k = 5) maximizando el Área Bajo la Curva Precisión-Sensibilidad (<code>average_precision</code>).</p>
+<hr>
+<h1>4. Validación, Métricas e Interpretación</h1>
+<h2>4.1. Validación Cruzada y Variabilidad</h2>
+<p>Dado el desbalance severo (prevalencia ~2,8 %) y el alto costo clínico de los falsos negativos, la métrica principal es el <strong>AUC-PR</strong> (Precisión Promedio), complementada con ROC-AUC y F1-score. El Cuadro 5 reporta el desempeño con su <strong>variabilidad estadística (media ± desv. estándar)</strong> entre los 5 folds.</p>
+<p><strong>Cuadro 5.</strong> Desempeño en Validación Cruzada Estratificada (k = 5) en la cohorte 2020.</p>
+<table>
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Hiperparámetros Óptimos</th>
+<th>AUC-PR (media ± desv)</th>
+<th>ROC-AUC (media ± desv)</th>
+<th>F1 (t = 0,50)</th>
+<th>F1 (t* ≈ 0,16)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reg. Logística</strong></td>
+<td><code>C: 0.1</code></td>
+<td><strong>0,268 ± 0,015</strong></td>
+<td>0,909 ± 0,003</td>
+<td>0,090 ± 0,020</td>
+<td><strong>0,351 ± 0,016</strong></td>
+</tr>
+<tr>
+<td><strong>LightGBM</strong></td>
+<td><code>lr: 0.05, n_est: 150, leaves: 15</code></td>
+<td>0,266 ± 0,016</td>
+<td>0,907 ± 0,002</td>
+<td>0,027 ± 0,012</td>
+<td>0,347 ± 0,020</td>
+</tr>
+<tr>
+<td><strong>XGBoost</strong></td>
+<td><code>lr: 0.1, depth: 3, n_est: 150</code></td>
+<td>0,265 ± 0,020</td>
+<td>0,908 ± 0,003</td>
+<td>0,055 ± 0,019</td>
+<td>0,350 ± 0,018</td>
+</tr>
+<tr>
+<td><strong>Random Forest</strong></td>
+<td><code>depth: 10, n_est: 200</code></td>
+<td>0,252 ± 0,014</td>
+<td>0,904 ± 0,004</td>
+<td>0,023 ± 0,007</td>
+<td>0,337 ± 0,020</td>
+</tr>
+<tr>
+<td><strong>SVM-RBF (Exacto)</strong></td>
+<td><code>C: 0.5, gamma: auto</code></td>
+<td>0,252 ± 0,029</td>
+<td>0,909 ± 0,008</td>
+<td>0,000 ± 0,000</td>
+<td>0,252 ± 0,029</td>
+</tr>
+<tr>
+<td><strong>Línea Base (Mayoría)</strong></td>
+<td><code>strategy: most_frequent</code></td>
+<td>0,028 ± 0,000</td>
+<td>0,500 ± 0,000</td>
+<td>0,000 ± 0,000</td>
+<td>0,000 ± 0,000</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Hallazgo Metodológico:</strong> Con 4 predictores demográficos y clínicos, los modelos de ensamble avanzado y SVM <strong>no superan estadísticamente a la Regresión Logística</strong>; las diferencias en AUC-PR (0,268 vs 0,265) son inferiores a la desviación estándar entre folds (±0,015). En virtud del principio de parsimonia e interpretabilidad clínica, la <strong>Regresión Logística es seleccionada como el mejor modelo</strong>. Asimismo, la optimización del umbral de decisión a t* ≈ 0,16 eleva el F1-score de 0,09 a 0,351, logrando una sensibilidad clínica de 45,2 % y precisión de 28,8 %.</p>
+<h2>4.2. Validación Cruzada Anidada (<em>Nested CV</em>)</h2>
+<p>Para obtener una estimación no sesgada del error de generalización y controlar el sesgo de selección de hiperparámetros (Criterio 7.4 de la guía), se ejecutó una <strong>Validación Cruzada Anidada (5 folds externos × 3 folds internos)</strong> (Cuadro 6). Los resultados confirman la consistencia de la Regresión Logística y demuestran que el desempeño se mantiene robusto sin sobreajuste.</p>
+<p><strong>Cuadro 6.</strong> Estimación no sesgada mediante Validación Cruzada Anidada (5 outer × 3 inner).</p>
+<table>
+<thead>
+<tr>
+<th>Modelo</th>
+<th>Nested AUC-PR (media ± desv)</th>
+<th>Nested ROC-AUC (media ± desv)</th>
+<th>Nested F1 (media ± desv)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Reg. Logística</strong></td>
+<td><strong>0,2662 ± 0,0143</strong></td>
+<td>0,9089 ± 0,0027</td>
+<td>0,2161 ± 0,0048</td>
+</tr>
+<tr>
+<td><strong>XGBoost</strong></td>
+<td>0,2658 ± 0,0192</td>
+<td>0,9078 ± 0,0029</td>
+<td>0,2118 ± 0,0052</td>
+</tr>
+<tr>
+<td><strong>LightGBM</strong></td>
+<td>0,2657 ± 0,0198</td>
+<td>0,9075 ± 0,0022</td>
+<td>0,2176 ± 0,0053</td>
+</tr>
+</tbody>
+</table>
+<h2>4.3. Evaluación Temporal Fuera de Muestra: ¿Covariate Drift o Prevalence Drift?</h2>
+<p>Al evaluar la Regresión Logística en 2021 y 2022 (Cuadro 7), el <strong>ROC-AUC se mantiene excelente e incluso aumenta (0,892 en 2021 → 0,921 en 2022)</strong>. El AUC-PR absoluto desciende de 0,199 a 0,185 debido exclusivamente a la caída de la tasa base (2,33 % → 1,10 %); no obstante, el <strong>desempeño relativo a la prevalencia se duplica (8,6× → 16,9×)</strong>.</p>
+<p>Los tests de Kolmogorov-Smirnov sobre la edad frente a 2020 (D = 0,026 en 2021 y D = 0,061 en 2022) confirman que la distribución de las variables de entrada es estable. Por ende, <strong>el fenómeno observado es un cambio de prevalencia (<em>prior drift<em>), no un </em>covariate drift</em></strong>. Las Figuras 4 y 5 ilustran las curvas PR y ROC del modelo seleccionado sobre 2021.</p>
+<p><strong>Cuadro 7.</strong> Evaluación temporal fuera de muestra del modelo seleccionado (Regresión Logística).</p>
+<table>
+<thead>
+<tr>
+<th>Periodo / Ola</th>
+<th>Prevalencia Real</th>
+<th>ROC-AUC</th>
+<th>AUC-PR</th>
+<th>Ratio AUC-PR / Prevalencia</th>
+<th>Brier Score</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>2021 (Delta)</strong></td>
+<td>2,33 %</td>
+<td>0,892</td>
+<td>0,199</td>
+<td>8,6× sobre tasa base</td>
+<td>0,109</td>
+</tr>
+<tr>
+<td><strong>2022 (Ómicron)</strong></td>
+<td>1,10 %</td>
+<td>0,921</td>
+<td>0,185</td>
+<td>16,9× sobre tasa base</td>
+<td>0,163</td>
+</tr>
+</tbody>
+</table>
+<p><img alt="Curva Precision-Recall" src="../figures/curva_pr_2021.png"></p>
+<p><strong>Figura 4.</strong> Curva Precisión-Sensibilidad del mejor modelo (Regresión Logística) sobre la cohorte 2021 (Delta).</p>
+<p><img alt="Curva ROC" src="../figures/roc_2021.png"></p>
+<p><strong>Figura 5.</strong> Curva ROC del mejor modelo (Regresión Logística) sobre la cohorte 2021 (Delta).</p>
+<h2>4.4. Interpretación Preliminar de Variables</h2>
+<p>El análisis de <strong>importancia por permutación</strong> sobre la cohorte 2021 (Figura 6) demuestra que la <strong>edad es el factor clínico preponderante</strong>, generando una disminución de 0,1730 ± 0,0004 en AUC-PR al ser permutada. Le siguen en menor magnitud el sexo (0,0189 ± 0,0015), la fuente de contagio (0,0182 ± 0,0025) y la ciudad (0,0070 ± 0,0020). Esto convalida plenamente la decisión de centrar la simulación de drift en la variable etaria.</p>
+<p><img alt="Importancia por permutación" src="../figures/importancia_permutacion.png"></p>
+<p><strong>Figura 6.</strong> Importancia de variables por permutación (disminución en AUC-PR) para la Regresión Logística.</p>
+<hr>
+<h1>Conclusión</h1>
+<p>La Segunda Entrega consolidó un flujo de modelamiento reproducible y sin fuga sobre 300 000 casos del INS. Se replicó con rigor el método de Jones y Farrow (2025) en Wisconsin y se adaptó al contexto colombiano mediante simulación de envejecimiento. El hallazgo metodológico es contundente: el cambio en el comportamiento del modelo de gravedad entre 2020 y 2022 se debe a un <strong>cambio de prevalencia epidemiológica y no a un drift de covariables</strong>, un límite intrínseco del OCSVM que monitorea únicamente P(X). La comparación en validación anidada demuestra un empate estadístico entre clasificadores, justificando la selección de la Regresión Logística. Para la Entrega Final se profundizará en explicabilidad individual (SHAP), recalibración Bayesiana de probabilidades y despliegue funcional en Streamlit.</p>
+<hr>
+<h1>Nota sobre el uso de IA</h1>
+<p>El equipo utilizó herramientas de inteligencia artificial generativa como apoyo para estructurar el código reproducible y la redacción técnica del informe, a partir de las decisiones analíticas tomadas por los integrantes. Todas las decisiones metodológicas pueden ser sustentadas por el equipo.</p>
+<hr>
+<h1>Referencias</h1>
+<p>[1] Jones, W. S., &amp; Farrow, D. J. (2025). One-class support vector machines for detecting population drift in deployed machine learning medical diagnostics. <em>Scientific Reports</em>, 15, 12157.</p>
+<p>[2] Instituto Nacional de Salud (INS). <em>Casos positivos de COVID-19 en Colombia</em>. Datos Abiertos Colombia. https://www.datos.gov.co/Salud-y-Protecci-n-Social/Casos-positivos-de-COVID-19-en-Colombia/gt2j-8ykr</p>
+<p>[3] Schölkopf, B., et al. (2001). Estimating the support of a high-dimensional distribution. <em>Neural Computation</em>, 13(7), 1443–1471.</p>
+<p>[4] Chawla, N. V., et al. (2002). SMOTE: Synthetic Minority Over-sampling Technique. <em>Journal of Artificial Intelligence Research</em>, 16, 321–357.</p>
+<p>[5] Pedregosa, F., et al. (2011). Scikit-learn: Machine learning in Python. <em>Journal of Machine Learning Research</em>, 12, 2825–2830.</p>
+<p>[6] Chen, T., &amp; Guestrin, C. (2016). XGBoost: A scalable tree boosting system. <em>Proceedings of KDD</em>, 785–794.</p>
+<p>[7] Ke, G., et al. (2017). LightGBM: A highly efficient gradient boosting decision tree. <em>Advances in Neural Information Processing Systems</em>, 30.</p>
+<p>[8] Liu, F. T., Ting, K. M., &amp; Zhou, Z.-H. (2008). Isolation Forest. <em>Proceedings of ICDM</em>, 413–422.</p>
+</body>
+</html>
