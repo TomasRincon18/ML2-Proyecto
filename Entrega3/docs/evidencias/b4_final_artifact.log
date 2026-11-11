@@ -1,0 +1,9 @@
+=== ARTEFACTO FINAL — B4 ===
+Estrategia: retrain_2020_2021_platt
+Umbral bayesiano: 0.0909 (FN/FP=10)
+Train: 100,000 (2020) + 80,000 (2021) = 180,000
+Calibración: 20,000 casos de 2021
+2022 AUC-PR: 0.1903 | ROC-AUC: 0.9228 | Brier: 0.01192 | ECE: 0.02380
+Decisión @ 0.091: Recall=0.7860 | Precision=0.0814 | F1=0.1475
+Paridad referencia: 0.00e+00
+Artefacto: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/model_final.joblib

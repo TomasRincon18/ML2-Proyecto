@@ -1,0 +1,9 @@
+=== MODELO FINAL — ENTREGA 3 ===
+Mejor C: 0.1 | CV AUC-PR: 0.2666
+Umbral costo (FN/FP=10): 0.75 | Recall=0.5307 | Precision=0.1758 | F1=0.2641
+Umbral F1: 0.82 | F1=0.2832 | Recall=0.4336 | Precision=0.2103
+Umbral recall>=80%: 0.43 | Recall=0.8083 | Precision=0.0928 | F1=0.1665
+2021 AUC-PR: 0.1992 | ROC-AUC: 0.8918
+2022 AUC-PR: 0.1854 | ROC-AUC: 0.9209 | F1@0.75: 0.1303 | Recall: 0.8069
+Artefacto: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/model.joblib
+Métricas: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/metrics.json

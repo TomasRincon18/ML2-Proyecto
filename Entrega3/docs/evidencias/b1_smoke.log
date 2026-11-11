@@ -1,0 +1,8 @@
+=== SMOKE TEST — ENTREGA 3 ===
+Dataset: 300,000 filas | 2020: 100,000
+Train smoke: 4,000 | Validación smoke: 1,000
+Columnas transformadas: 19
+AUC-PR: 0.1372 | ROC-AUC: 0.8801
+Umbral F1-óptimo: 0.49 | F1: 0.2041
+Prevalencia validación: 0.0270
+OK: pipeline reproducible y sin errores de compatibilidad.

@@ -1,0 +1,8 @@
+2026-11-10 14:59:02.207 WARNING streamlit.runtime.scriptrunner_utils.script_run_context: Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 14:59:04.645 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+2026-11-10 14:59:05.150 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+=== APPTEST — B7 ===
+86 M OTROS MUNICIPIOS COMUNITARIA: ['48.2%', 'Grave (alerta)'] | warnings=0
+30 F CALI COMUNITARIA: ['0.2%', 'No grave'] | warnings=1
+73 F BOGOTA RELACIONADO: ['5.4%', 'No grave'] | warnings=0
+OK: 3 casos sin excepciones

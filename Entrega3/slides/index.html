@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Population drift y gravedad clínica de COVID-19</title>
+  <link rel="stylesheet" href="reveal/reveal.css">
+  <link rel="stylesheet" href="reveal/white.css">
+  <style>
+    :root {
+      --azul: #1d3557;
+      --azul-claro: #457b9d;
+      --verde: #2a9d8f;
+      --rojo: #e63946;
+      --gris: #495057;
+      --fondo: #f8f9fa;
+    }
+    .reveal { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; }
+    .reveal h1, .reveal h2, .reveal h3 { color: var(--azul); text-transform: none; letter-spacing: 0; }
+    .reveal h1 { font-size: 2.1em; line-height: 1.1; }
+    .reveal h2 { font-size: 1.55em; margin-bottom: 0.35em; }
+    .reveal h3 { font-size: 1.05em; margin-bottom: 0.2em; }
+    .reveal p, .reveal li { font-size: 0.78em; line-height: 1.35; color: #212529; }
+    .reveal ul { margin-left: 1em; }
+    .reveal li { margin-bottom: 0.25em; }
+    .reveal .slide-number { color: var(--gris); font-size: 0.55em; }
+    .title-slide h1 { color: #ffffff; font-size: 2.0em; line-height: 1.12; }
+    .title-slide h2 { color: #dbe9f4; font-size: 1.05em; font-weight: 400; }
+    .title-slide p { color: #dbe9f4; font-size: 0.68em; }
+    .title-slide .meta { font-size: 0.6em; color: #b8d0e4; }
+    .subtitle { color: var(--azul-claro); font-weight: 600; }
+    .cols { display: flex; gap: 1.6rem; align-items: flex-start; }
+    .col { flex: 1; }
+    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 0.6rem; }
+    .metric { background: var(--fondo); border-left: 4px solid var(--verde); padding: 0.5rem 0.7rem; }
+    .metric .v { font-size: 1.55em; font-weight: 700; color: var(--azul); line-height: 1; }
+    .metric .l { font-size: 0.62em; color: var(--gris); margin-top: 0.15rem; }
+    .fig { max-height: 360px; max-width: 100%; border-radius: 5px; }
+    .fig-sm { max-height: 285px; max-width: 100%; border-radius: 5px; }
+    .two-figs { display: flex; gap: 0.8rem; align-items: flex-start; }
+    .two-figs img { max-height: 300px; max-width: 49%; }
+    .small { font-size: 0.65em; color: var(--gris); }
+    .tag { display: inline-block; background: var(--rojo); color: #fff; padding: 0.08em 0.45em; border-radius: 4px; font-size: 0.62em; font-weight: 700; vertical-align: middle; }
+    .highlight { color: var(--rojo); font-weight: 700; }
+    .box { background: var(--fondo); border: 1px solid #dee2e6; border-radius: 6px; padding: 0.55rem 0.75rem; }
+    .box h3 { margin-top: 0; }
+    .pill { display: inline-block; border: 1px solid var(--azul-claro); color: var(--azul); border-radius: 999px; padding: 0.1em 0.55em; font-size: 0.65em; margin: 0.1em 0.15em 0.1em 0; }
+    .eq { font-family: "DejaVu Sans Mono", monospace; font-size: 0.8em; background: #eef3f7; padding: 0.25em 0.5em; border-radius: 4px; }
+    .reveal .progress { color: var(--verde); }
+    .reveal .controls { color: var(--azul); }
+    .dense p, .dense li { font-size: 0.68em; }
+    .dense h2 { font-size: 1.32em; }
+  </style>
+</head>
+<body>
+<div class="reveal">
+  <div class="slides">
+
+    <section class="title-slide" data-background-color="#1d3557">
+      <h2 class="subtitle" style="color:#b8d0e4">Machine Learning II, Proyecto Integrador</h2>
+      <h1>Detección de <em>population drift</em> en la predicción de gravedad clínica de COVID-19</h1>
+      <p>Ailyn Sofía Gómez Rodríguez · Juan Tomás Rincón Pinzón</p>
+      <p class="meta">Docente: Wilmer Darío Pineda Ríos<br>Universidad Externado de Colombia · 2026</p>
+      <p class="meta">Del monitor OCSVM al modelo calibrado y desplegado</p>
+      <aside class="notes">Saludo y encuadre: el proyecto empezó con un OCSVM para detectar drift y terminó mostrando que el problema real era otro.</aside>
+    </section>
+
+    <section>
+      <h2>El problema: cambió la población o cambió el riesgo</h2>
+      <div class="cols">
+        <div class="col">
+          <div class="box">
+            <h3>Tres cambios distintos</h3>
+            <ul>
+              <li><strong>P(X):</strong> cambian las covariables de entrada.</li>
+              <li><strong>P(Y|X):</strong> cambia la relación entre perfil y desenlace.</li>
+              <li><strong>P(Y):</strong> cambia la prevalencia.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="col">
+          <div class="box">
+            <h3>Lo que pasó en Colombia</h3>
+            <p>La población de entrada se mantuvo estable. La prevalencia cayó de <strong>2,82 %</strong> a <strong>1,10 %</strong> y también cambió la relación riesgo-covariables.</p>
+            <p class="small">El monitor de P(X) no podía ver ninguno de esos dos cambios.</p>
+          </div>
+        </div>
+      </div>
+      <p class="small">Jones &amp; Farrow (2025) proponen el OCSVM como monitor de la población de entrada. El proyecto lo lleva al INS y añade la capa supervisada que falta.</p>
+      <aside class="notes">No confundir drift de covariables con cambio de prevalencia o de P(Y|X). Esa distinción ordena toda la presentación.</aside>
+    </section>
+
+    <section>
+      <h2>El artículo base</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>Jones &amp; Farrow (2025)</h3>
+          <p><em>One-class SVM for detecting population drift in deployed ML medical diagnostics</em>, Scientific Reports.</p>
+          <ul>
+            <li>OCSVM con kernel RBF, <span class="eq">ν = 0,01</span>.</li>
+            <li>Se entrena con Wisconsin Breast Cancer.</li>
+            <li>Aprende el soporte de P(X): inlier u outlier.</li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="box">
+            <h3>Supuestos y límite</h3>
+            <ul>
+              <li>La población de entrenamiento representa el uso previsto.</li>
+              <li>Un outlier en X es una señal de drift clínicamente relevante.</li>
+              <li>No usa Y: no detecta cambios de prevalencia ni de P(Y|X).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <p class="small">El proyecto reproduce el método y lo contrasta con datos reales del INS.</p>
+      <aside class="notes">Dejar claro desde el inicio que el OCSVM es un monitor de P(X), no un clasificador ni un monitor de calibración.</aside>
+    </section>
+
+    <section>
+      <h2>Datos: 6,39 millones de casos del INS</h2>
+      <div class="cols">
+        <div class="col">
+          <ul>
+            <li>Fuente: <em>Casos positivos de COVID-19 en Colombia</em>, datos.gov.co, recurso <code>gt2j-8ykr</code>.</li>
+            <li>6.390.844 registros crudos.</li>
+            <li>6.311.405 después de depurar nulos y limitar a 2020-2022.</li>
+            <li>300.000 en la muestra final: 100.000 por ola.</li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="metric-grid" style="grid-template-columns: 1fr;">
+            <div class="metric"><div class="v">2,82 %</div><div class="l">prevalencia de gravedad 2020</div></div>
+            <div class="metric"><div class="v">2,33 %</div><div class="l">2021, Delta</div></div>
+            <div class="metric"><div class="v">1,10 %</div><div class="l">2022, Ómicron</div></div>
+          </div>
+        </div>
+      </div>
+      <p class="small">Predictores: edad, sexo, ciudad y fuente de contagio. Objetivo: <code>grave</code> (fallecido, grave o UCI).</p>
+      <aside class="notes">La caída de prevalencia es el dato que explica por qué las métricas tradicionales se ven peor en 2022.</aside>
+    </section>
+
+    <section>
+      <h2>Protocolo: entrenar, calibrar, evaluar</h2>
+      <div class="cols">
+        <div class="col">
+          <div class="box">
+            <h3>Partición temporal</h3>
+            <p><span class="pill">2020 entrena</span><span class="pill">2021 calibra</span><span class="pill">2022 evalúa</span></p>
+            <p class="small">La separación ocurre antes de cualquier transformación.</p>
+          </div>
+        </div>
+        <div class="col">
+          <div class="box">
+            <h3>Pipeline sin fuga</h3>
+            <p><code>StandardScaler</code> + <code>OneHotEncoder(drop='first')</code> + regresión logística.</p>
+            <p>Las transformaciones se ajustan solo con el train de cada partición. El test se usa una vez.</p>
+          </div>
+        </div>
+      </div>
+      <p class="small">El modelo final reentrena con 2020 + 80 % de 2021 y calibra con el 20 % restante. 2022 queda fuera.</p>
+      <aside class="notes">Si preguntan por fuga: la partición temporal y el Pipeline dentro de la CV son la respuesta.</aside>
+    </section>
+
+    <section>
+      <h2>Réplica del OCSVM: funciona como monitor de P(X)</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>Wisconsin</h3>
+          <p>La réplica reproduce la tendencia del artículo: a más ruido, más solapamiento con la frontera y menos outliers detectados.</p>
+          <h3>Colombia</h3>
+          <ul>
+            <li>2020 test: <strong>98,96 %</strong> inliers.</li>
+            <li>2021: <strong>99,08 %</strong>.</li>
+            <li>2022: <strong>97,99 %</strong>.</li>
+          </ul>
+        </div>
+        <div class="col">
+          <div class="box">
+            <h3>Drift simulado</h3>
+            <p>Con 30 % de ruido, el OCSVM baja a <strong>72 %</strong> de inliers. Isolation Forest se queda en <strong>100 %</strong>.</p>
+            <p class="small">El monitor detecta el corrimiento controlado, pero no el cambio real de prevalencia.</p>
+          </div>
+        </div>
+      </div>
+      <aside class="notes">Aquí está el hallazgo de la fase 2: P(X) estable, pero el clasificador se degrada por otra razón.</aside>
+    </section>
+
+    <section>
+      <h2>Modelo final: reentreno + calibración Platt</h2>
+      <div class="metric-grid">
+        <div class="metric"><div class="v">0,190</div><div class="l">AUC-PR en 2022</div></div>
+        <div class="metric"><div class="v">0,923</div><div class="l">ROC-AUC</div></div>
+        <div class="metric"><div class="v">0,0119</div><div class="l">Brier</div></div>
+        <div class="metric"><div class="v">0,0238</div><div class="l">ECE</div></div>
+        <div class="metric"><div class="v">0,147</div><div class="l">F1 con umbral 0,091</div></div>
+        <div class="metric"><div class="v">0,786</div><div class="l">recall con umbral 0,091</div></div>
+      </div>
+      <div class="cols" style="margin-top:0.7rem">
+        <div class="col">
+          <p><strong>Entrenamiento:</strong> 2020 completo + 80 % de 2021 (180.000 casos).</p>
+          <p><strong>Calibración:</strong> Platt sobre el 20 % de 2021 (20.000 casos).</p>
+        </div>
+        <div class="col">
+          <p><strong>Umbral:</strong> <span class="eq">t* = 1 / (1 + 10) = 0,0909</span></p>
+          <p class="small">Costo de un falso negativo diez veces mayor que el de un falso positivo.</p>
+        </div>
+      </div>
+      <aside class="notes">La mejora frente a solo calibrar 2021 es pequeña, pero el bootstrap muestra que es consistente.</aside>
+    </section>
+
+    <section class="dense">
+      <h2>Calibración: el modelo crudo no se puede leer como riesgo</h2>
+      <div class="cols">
+        <div class="col" style="flex:1.25">
+          <img class="fig-sm" src="assets/calibracion_final_2022.png" alt="Curvas de fiabilidad en 2022">
+        </div>
+        <div class="col">
+          <ul>
+            <li>Modelo crudo: media <strong>0,287</strong> con prevalencia <strong>0,011</strong>.</li>
+            <li>Platt de origen: Brier 0,0126, ECE 0,025.</li>
+            <li>EM falló: 0 en 2021, sobreestimó en 2022.</li>
+            <li>Beta mejoró Brier, pero bajó F1. Se descartó.</li>
+          </ul>
+          <p class="small">Brier skill -0,098: el valor está en el ranking.</p>
+        </div>
+      </div>
+      <aside class="notes">No decir que el modelo está perfectamente calibrado. El decil superior sigue sobreestimado.</aside>
+    </section>
+
+    <section>
+      <h2>Interpretabilidad: la edad manda</h2>
+      <div class="cols">
+        <div class="col">
+          <img class="fig" src="assets/shap_importance_ci.png" alt="Importancia SHAP con IC 95 %">
+        </div>
+        <div class="col">
+          <img class="fig" src="assets/pdp_edad.png" alt="Dependencia parcial de la edad">
+        </div>
+      </div>
+      <div class="cols" style="margin-top:0.4rem">
+        <div class="col">
+          <p><strong>Edad:</strong> 1,663 |SHAP|, 4,7 veces la siguiente variable.</p>
+        </div>
+        <div class="col">
+          <p><strong>PDP:</strong> el umbral 0,091 se cruza hacia los 69 años; a los 80 el riesgo medio es 0,213.</p>
+        </div>
+      </div>
+      <aside class="notes">Caso local: 86 años, hombre, otros municipios, riesgo 0,482. La edad aporta casi toda la explicación.</aside>
+    </section>
+
+    <section>
+      <h2>Errores y utilidad: un modelo etario</h2>
+      <div class="two-figs">
+        <img src="assets/errores_edad.png" alt="Errores por edad">
+        <img src="assets/decision_curve.png" alt="Curva de decisión">
+      </div>
+      <ul style="margin-top:0.5rem">
+        <li>Recall <strong>0</strong> en menores de 60; <strong>0,684</strong> en 60-79; <strong>1,000</strong> en 80+.</li>
+        <li>Beneficio neto <strong>-0,0010</strong> con umbral 0,091; <strong>+0,0010</strong> con 0,05.</li>
+        <li>Sirve para triage de mayores de 60. No sirve para descartar gravedad en jóvenes.</li>
+      </ul>
+      <aside class="notes">Este es el resultado más incómodo y el que hay que defender con honestidad. La app advierte y permite bajar el umbral.</aside>
+    </section>
+
+    <section>
+      <h2>Despliegue: Streamlit + Docker</h2>
+      <div class="cols">
+        <div class="col" style="flex:1.1">
+          <img class="fig-sm" src="assets/streamlit_prediccion_alto.png" alt="Aplicación Streamlit">
+        </div>
+        <div class="col">
+          <ul>
+            <li>Tres pestañas: predicción individual, lote + monitor, ficha del modelo.</li>
+            <li>Riesgo calibrado, advertencia por edad y control de umbral.</li>
+            <li>Explicación en dos capas: what-if en probabilidad y SHAP en log-odds.</li>
+            <li>Docker con healthcheck, paridad 0,0 y AppTest OK.</li>
+            <li>Predicción en contenedor: 24,6&nbsp;%, igual que en host.</li>
+          </ul>
+        </div>
+      </div>
+      <aside class="notes">La app está en localhost:8501. Si la demo falla, mostrar las capturas de respaldo.</aside>
+    </section>
+
+    <section>
+      <h2>Limitaciones y cierre</h2>
+      <div class="cols">
+        <div class="col">
+          <h3>Limitaciones</h3>
+          <ul>
+            <li>2022 no es un test ciego.</li>
+            <li>Faltan comorbilidades, vacunación y variante.</li>
+            <li>Modelo etario, con Brier skill negativo.</li>
+            <li>El OCSVM solo vigila P(X).</li>
+          </ul>
+        </div>
+        <div class="col">
+          <h3>Proyección</h3>
+          <ul>
+            <li>Holdout temporal ciego.</li>
+            <li>Más covariables y modelos no lineales calibrados.</li>
+            <li>Monitoreo de P(Y|X) y de calibración.</li>
+            <li>MLOps: registro, alertas y reentrenamiento.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="box" style="margin-top:0.7rem">
+        <p><strong>Idea central:</strong> vigilar las covariables no basta para saber si el clasificador sigue funcionando.</p>
+      </div>
+      <aside class="notes">Cerrar con la idea central y pasar a preguntas. Tener a mano el umbral 0,05 y las limitaciones.</aside>
+    </section>
+
+  </div>
+</div>
+<script src="reveal/reveal.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true,
+    slideNumber: 'c/t',
+    transition: 'slide',
+    width: 1280,
+    height: 720,
+    margin: 0.035,
+    controls: true,
+    progress: true
+  });
+</script>
+</body>
+</html>

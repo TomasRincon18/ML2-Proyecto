@@ -1,0 +1,20 @@
+/home/fabri/.local/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+=== B3 — CALIBRACIÓN I ===
+Prevalencia fuente 2020: 0.02821
+Platt: coef=0.9382 intercept=-3.5008
+
+2021 — prevalencia real 0.02327
+  static : media=0.22770 Brier=0.10913 logloss=0.34670 ECE=0.20443 AUC-PR=0.1992
+  platt  : media=0.02256 Brier=0.02042 logloss=0.08194 ECE=0.00212 AUC-PR=0.1992
+  em     : media=0.00000 Brier=0.02327 logloss=0.32148 ECE=0.02327 AUC-PR=0.0240 | pi_hat=0.00000 iter=895
+  oracle : media=0.01910 Brier=0.02041 logloss=0.08243 ECE=0.00424 AUC-PR=0.1992
+
+2022 — prevalencia real 0.01098
+  static : media=0.28726 Brier=0.16308 logloss=0.50014 ECE=0.27628 AUC-PR=0.1854
+  platt  : media=0.03628 Brier=0.01264 logloss=0.05650 ECE=0.02536 AUC-PR=0.1854
+  em     : media=0.08112 Brier=0.02785 logloss=0.10697 ECE=0.07014 AUC-PR=0.1854 | pi_hat=0.08112 iter=60
+  oracle : media=0.01631 Brier=0.00978 logloss=0.04286 ECE=0.00545 AUC-PR=0.1854
+
+Resultados: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/calibration_b3.json
+Figuras: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/figures

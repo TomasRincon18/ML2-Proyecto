@@ -1,0 +1,26 @@
+/home/fabri/.local/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+=== B5 — SHAP + PDP ===
+Muestra: 5,000 casos de 2022 | background: 1,000
+Base value (log-odds): -1.3566
+Importancia global (media |SHAP|):
+  Edad                 1.6635
+  Sexo                 0.3505
+  Ciudad               0.2177
+  Fuente de contagio   0.1622
+
+Casos locales:
+  Bajo riesgo  edad=30 F CALI p_cal=0.002
+  Alto riesgo  edad=86 M OTROS MUNICIPIOS p_cal=0.482
+  Caso límite  edad=73 F BOGOTA p_cal=0.091
+
+PDP edad (media calibrada):
+    0 años: 0.0002
+   20 años: 0.0012
+   40 años: 0.0075
+   60 años: 0.0438
+   80 años: 0.2133
+  100 años: 0.6059
+
+Resultados: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/shap_summary.json
+Figuras: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/figures

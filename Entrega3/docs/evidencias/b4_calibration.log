@@ -1,0 +1,21 @@
+/home/fabri/.local/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+=== B4 — CALIBRACIÓN II ===
+Umbral bayesiano FN/FP=10: 0.0909
+Prevalencia 2022: 0.01098
+
+static             Brier=0.16308 ECE=0.27628 LogLoss=0.50014 AUC-PR=0.1854 | t=0.750 R=0.8069 P=0.0709 F1=0.1303
+platt_source       Brier=0.01264 ECE=0.02536 LogLoss=0.05650 AUC-PR=0.1854 | t=0.091 R=0.7832 P=0.0785 F1=0.1427
+platt_target       Brier=0.01213 ECE=0.02522 LogLoss=0.05627 AUC-PR=0.1854 | t=0.091 R=0.7832 P=0.0784 F1=0.1426
+isotonic_target    Brier=0.01188 ECE=0.02489 LogLoss=0.05687 AUC-PR=0.1726 | t=0.091 R=0.8051 P=0.0709 F1=0.1303
+retrain_platt      Brier=0.01192 ECE=0.02380 LogLoss=0.05479 AUC-PR=0.1903 | t=0.091 R=0.7860 P=0.0814 F1=0.1475
+retrain_isotonic   Brier=0.01193 ECE=0.02385 LogLoss=0.05602 AUC-PR=0.1683 | t=0.091 R=0.8306 P=0.0683 F1=0.1262
+
+Diagnóstico con umbral empírico de 2021:
+static             t21=0.75 R=0.8069 P=0.0709 F1=0.1303
+platt_source       t21=0.08 R=0.8015 P=0.0717 F1=0.1316
+platt_target       t21=0.08 R=0.8042 P=0.0710 F1=0.1305
+isotonic_target    t21=0.08 R=0.8051 P=0.0709 F1=0.1303
+
+Resultados: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/calibration_b4.json
+Figuras: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/figures

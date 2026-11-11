@@ -1,0 +1,15 @@
+/home/fabri/.local/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+/home/fabri/.local/lib/python3.12/site-packages/sklearn/linear_model/_logistic.py:1170: UserWarning: Setting penalty=None will ignore the C and l1_ratio parameters
+  warnings.warn(
+=== BETA CALIBRATION vs PLATT ===
+Beta: a=1.0978 b=0.7895 c=-3.3120 | monotónica=True
+platt: Brier=0.01192 ECE=0.02380 LogLoss=0.05479 AUC-PR=0.1903 | R=0.7860 P=0.0814 F1=0.1475
+beta : Brier=0.01173 ECE=0.02364 LogLoss=0.05474 AUC-PR=0.1903 | R=0.7969 P=0.0790 F1=0.1438
+Decil superior (predicho / observado):
+  Platt: 0.2170 / 0.0850
+  Beta : 0.2107 / 0.0850
+
+¿Adoptar beta?: False
+Resultados: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/beta_calibration.json
+Figura: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/figures/calibracion_beta_2022.png

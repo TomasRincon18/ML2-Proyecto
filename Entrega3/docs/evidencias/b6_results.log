@@ -1,0 +1,29 @@
+/home/fabri/.local/lib/python3.12/site-packages/matplotlib/projections/__init__.py:63: UserWarning: Unable to import Axes3D. This may be due to multiple versions of Matplotlib being installed (e.g. as a system package and as a pip package). As a result, the 3D projection is not available.
+  warnings.warn("Unable to import Axes3D. This may be due to multiple versions of "
+=== B6 — ESTABILIDAD, ERRORES Y MONITOR ===
+Umbral: 0.0909
+
+Errores por edad:
+  0–17   n= 9,088 prev=0.0009 R=0.000 P=nan F1=0.000 gap=-0.0004
+  18–39  n=40,566 prev=0.0007 R=0.000 P=nan F1=0.000 gap=+0.0026
+  40–59  n=29,395 prev=0.0023 R=0.000 P=0.000 F1=0.000 gap=+0.0158
+  60–79  n=17,019 prev=0.0242 R=0.684 P=0.042 F1=0.080 gap=+0.0673
+  80+    n= 3,932 prev=0.1478 R=1.000 P=0.148 F1=0.258 gap=+0.1686
+
+Curva de decisión:
+  Mejor beneficio neto: 0.0064 en t=0.01
+  En t=0.091: modelo=-0.0010 vs tratar a todos=-0.0868
+
+Bootstrap SHAP (IC 95 %):
+  edad_anios             1.663 [1.632, 1.697]
+  sexo                   0.350 [0.349, 0.353]
+  ciudad_top             0.218 [0.214, 0.221]
+  fuente_tipo_contagio   0.162 [0.157, 0.167]
+
+Monitor fase 2:
+  2020 test (out-of-sample)    OCSVM=98.96% IForest=98.93%
+  2021 Delta                   OCSVM=99.08% IForest=98.08%
+  2022 Ómicron                 OCSVM=97.99% IForest=98.92%
+
+Resultados: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/artifacts/b6_results.json
+Figuras: /home/fabri/code/Semestre 5/MachineLearning2/Proyecto/Entrega3/figures
