@@ -33,6 +33,8 @@ Cerrar con la frase del recuadro:
 
 > "En Colombia, P(X) se mantuvo estable. La prevalencia cayó de 2,82 % a 1,10 % y también cambió P(Y|X). El monitor de P(X) no podía ver esos cambios."
 
+Las dos tarjetas de abajo separan lo que el monitor sí ve, la distribución de X, de lo que no ve, P(Y) y P(Y|X).
+
 **Transición:** "Ese es justamente el alcance del artículo que tomamos como base."
 
 **Interpretación:** La distinción importa porque el OCSVM solo vigila P(X). Si el problema está en P(Y) o P(Y|X), el monitor no lo va a ver.
@@ -43,7 +45,7 @@ Resumir el método en dos frases:
 
 > "Jones y Farrow entrenan un OCSVM con la población de referencia. Si un caso cae fuera del soporte, lo marcan como posible drift. No usan la etiqueta, así que no pueden ver cambios de prevalencia ni de P(Y|X)."
 
-No entrar en la matemática del kernel salvo que pregunten. La tarjeta de la derecha resume el flujo: P(X) de referencia, inlier, outlier.
+No entrar en la matemática del kernel salvo que pregunten. La tarjeta de la derecha resume el flujo: P(X) de referencia, inlier, outlier. Las dos tarjetas de abajo resumen los supuestos y el límite del método.
 
 **Transición:** "Con ese método, pasamos a los datos del INS."
 
@@ -55,7 +57,7 @@ No entrar en la matemática del kernel salvo que pregunten. La tarjeta de la der
 
 Señalar las barras de prevalencia: 2,82 %, 2,33 % y 1,10 %. Es el dato que explica por qué las métricas tradicionales se ven peor en 2022.
 
-Mencionar las cuatro variables y que se excluyó tipo de atención por fuga de información.
+Mencionar las cuatro variables y que se excluyó tipo de atención por fuga de información. Las tarjetas de abajo resumen la calidad del dato y la lectura de la caída de prevalencia.
 
 **Transición:** "La partición temporal es la que evita que el modelo vea el futuro."
 
@@ -65,7 +67,7 @@ Mencionar las cuatro variables y que se excluyó tipo de atención por fuga de i
 
 > "2020 entrena, 2021 calibra y 2022 evalúa. La separación ocurre antes de cualquier transformación. El Pipeline ajusta el escalamiento y el one-hot solo con el train de cada partición."
 
-Aclarar que el modelo final usa 2020 completo más el 80 % de 2021, y que el 20 % restante de 2021 se usa para calibrar. 2022 no se toca.
+Aclarar que el modelo final usa 2020 completo más el 80 % de 2021, y que el 20 % restante de 2021 se usa para calibrar. 2022 no se toca. La tarjeta de Lectura cierra la idea: la partición temporal y el Pipeline son la defensa metodológica.
 
 **Transición:** "Con ese protocolo, primero probamos si el OCSVM detectaba el cambio."
 
@@ -79,6 +81,8 @@ Contrastar con la simulación:
 
 > "Con 30 % de ruido, los inliers bajan a 72 %. Isolation Forest se queda en 100 %. El monitor sí detecta el drift controlado, pero no el cambio real de prevalencia."
 
+La tarjeta de Lectura conecta el monitor con la capa supervisada: certifica P(X), pero no explica la caída del clasificador.
+
 **Transición:** "Entonces el problema no estaba en P(X). Estaba en el clasificador y en su calibración."
 
 **Interpretación:** El monitor cumple su función, pero no explica la caída del clasificador. Ese es el puente hacia la capa supervisada.
@@ -91,7 +95,7 @@ Leer solo las métricas principales: AUC-PR 0,190, ROC-AUC 0,923, Brier 0,0119, 
 
 **Transición:** "El siguiente problema era que el modelo crudo no se podía leer como riesgo."
 
-**Interpretación:** El AUC-PR no es alto, pero el modelo es consistente. La mejora frente a las alternativas es pequeña y el bootstrap la respalda.
+**Interpretación:** El AUC-PR no es alto, pero el modelo es consistente. La mejora frente a las alternativas es pequeña y el bootstrap la respalda. Este modelo es la capa supervisada que el artículo no cubre; el OCSVM ya se validó como monitor de P(X).
 
 ## Diapositiva 8. Calibración
 
@@ -151,11 +155,11 @@ Mencionar Docker:
 
 > "2022 no es un test ciego. Faltan comorbilidades, vacunación y variante. El modelo es etario y el Brier skill es negativo. El OCSVM solo vigila P(X)."
 
-Proyección: holdout temporal ciego, más covariables, modelos no lineales calibrados, monitoreo de P(Y|X) y MLOps.
+Proyección: holdout temporal ciego, más covariables, modelos no lineales calibrados, monitoreo de P(Y|X) y MLOps. La tarjeta "Qué significa" y la línea de demo cierran la presentación.
 
-Cerrar con la idea del recuadro:
+Cerrar con la tarjeta "Qué significa":
 
-> "El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X)."
+> "El monitor de P(X) es necesario, pero no suficiente. La calibración supervisada y el análisis por subgrupo cubren el cambio de P(Y|X)."
 
 Pasar a la demo o a preguntas.
 

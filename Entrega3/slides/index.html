@@ -373,6 +373,9 @@
     .closing-slide {
       color: #fff;
       padding: 0.2em 0.4em !important;
+      display: flex !important;
+      flex-direction: column;
+      height: 100%;
     }
     .closing-slide::after {
       content: "";
@@ -449,7 +452,11 @@
           <p>Qué proporción de los casos termina en gravedad.</p>
         </div>
       </div>
-      <div class="callout gold" style="margin-top:0.65rem">
+      <div class="two" style="margin-top:0.45rem">
+        <div class="card soft"><h3>Lo que el monitor sí ve</h3><p>Cambios en la distribución de X: edad, sexo, ciudad y fuente de contagio.</p></div>
+        <div class="card alert"><h3>Lo que no ve</h3><p>Cambios de prevalencia y de P(Y|X). Por eso el proyecto añade calibración supervisada.</p></div>
+      </div>
+      <div class="callout gold" style="margin-top:0.45rem">
         En Colombia, <strong>P(X) se mantuvo estable</strong>. La prevalencia cayó de <strong>2,82 %</strong> a <strong>1,10 %</strong> y también cambió P(Y|X).
       </div>
       <aside class="notes">No confundir covariate drift con prevalence drift o concept shift. Esa distinción ordena toda la presentación.</aside>
@@ -470,10 +477,11 @@
             <p><span class="pill teal">Inlier</span> dentro del soporte</p>
             <p><span class="pill coral">Outlier</span> posible cambio poblacional</p>
           </div>
-          <div class="callout alert" style="margin-top:0.5rem">
-            No usa Y: no ve P(Y) ni P(Y|X). Es un monitor, no un diagnóstico.
-          </div>
         </div>
+      </div>
+      <div class="two" style="margin-top:0.4rem">
+        <div class="card soft"><h3>Supuestos</h3><p>La población de entrenamiento representa el uso previsto; un outlier en X es una señal de drift.</p></div>
+        <div class="card alert"><h3>Límite</h3><p>No usa Y: no ve P(Y) ni P(Y|X). Es un monitor, no un diagnóstico.</p></div>
       </div>
       <aside class="notes">Describir el método en dos frases. El foco no es la matemática del OCSVM, sino su alcance.</aside>
     </section>
@@ -503,6 +511,10 @@
           </div>
         </div>
       </div>
+      <div class="two" style="margin-top:0.45rem">
+        <div class="card soft"><h3>Calidad</h3><p>Quedan 6,31 M de 6,39 M tras depurar nulos y limitar a 2020-2022.</p></div>
+        <div class="card alert"><h3>Lectura</h3><p>La caída de prevalencia cambia la tasa base y la lectura de F1; no es un fallo del modelo.</p></div>
+      </div>
       <aside class="notes">La caída de prevalencia es el dato que explica por qué las métricas tradicionales se ven peor en 2022.</aside>
     </section>
 
@@ -531,6 +543,10 @@
         <p><span class="pill">StandardScaler</span><span class="pill">OneHotEncoder</span><span class="pill">LogisticRegression</span></p>
         <p class="small">Las transformaciones se ajustan solo con el train de cada partición. El test se usa una vez. 2022 no es ciego: ya se observó en la fase 2.</p>
       </div>
+      <div class="card" style="margin-top:0.45rem">
+        <h3>Lectura</h3>
+        <p>La partición temporal y el Pipeline son la defensa metodológica. 2022 no es ciego: ya se observó en la fase 2.</p>
+      </div>
       <aside class="notes">Si preguntan por fuga: partición temporal antes de cualquier transformación y Pipeline dentro de la validación.</aside>
     </section>
 
@@ -547,8 +563,9 @@
             <p>En 2020-2022, entre <strong>98 % y 99 %</strong> de inliers.</p>
             <p>Sim 30 %: OCSVM <strong>72 %</strong>, Isolation Forest <strong>100&nbsp;%</strong>.</p>
           </div>
-          <div class="callout alert" style="margin-top:0.5rem">
-            P(X) estable no significa que el clasificador siga funcionando. El monitor certifica la entrada, pero no explica la caída del clasificador.
+          <div class="card soft" style="margin-top:0.35rem">
+            <h3>Lectura</h3>
+            <p>El monitor certifica P(X), pero no explica la caída del clasificador. Ese es el puente a la calibración supervisada.</p>
           </div>
         </div>
       </div>
@@ -578,7 +595,7 @@
           <p class="small">Costo FN/FP = 10: el falso negativo pesa diez veces más.</p>
         </div>
       </div>
-      <div class="callout" style="margin-top:0.45rem">Mejor AUC-PR y F1 que las alternativas; el bootstrap confirma la mejora. No es un salto grande: el valor está en la consistencia y la calibración.</div>
+      <div class="callout takeaway" style="margin-top:0.45rem">Mejor AUC-PR y F1 que las alternativas; el bootstrap confirma la mejora. No es un salto grande: el valor está en la consistencia y la calibración.</div>
       <aside class="notes">La mejora es pequeña, pero consistente. No vender un salto grande: es un ajuste fino y honesto.</aside>
     </section>
 
@@ -613,7 +630,7 @@
         <div class="fig-card"><img class="fig-300" src="assets/shap_slide.png" alt="Importancia SHAP"></div>
         <div class="fig-card"><img class="fig-300" src="assets/pdp_slide.png" alt="Dependencia parcial de la edad"></div>
       </div>
-      <div class="callout" style="margin-top:0.4rem">
+      <div class="callout takeaway" style="margin-top:0.4rem">
         Edad: 1,66 |SHAP|, 4,7× la siguiente. Umbral a los ~69 años; 0,213 a los 80. El modelo es casi un score etario: las demás variables ajustan, no cambian la historia.
       </div>
       <aside class="notes">Caso local: 86 años, hombre, otros municipios, riesgo 0,482. La edad aporta casi toda la explicación.</aside>
@@ -626,7 +643,7 @@
         <div class="fig-card"><img class="fig-300" src="assets/errores_slide.png" alt="Errores por edad"></div>
         <div class="fig-card"><img class="fig-300" src="assets/decision_slide.png" alt="Curva de decisión"></div>
       </div>
-      <div class="callout alert" style="margin-top:0.45rem">
+      <div class="callout alert takeaway" style="margin-top:0.45rem">
         Recall 0 en <60; 0,684 en 60-79; 1,000 en 80+. Triage para mayores de 60, no tamizaje. La limitación principal es no detectar jóvenes; con 0,05 el beneficio neto es positivo.
       </div>
       <aside class="notes">Este es el resultado más incómodo. Decirlo sin rodeos y explicar la advertencia de la app.</aside>
@@ -649,7 +666,7 @@
           <p style="margin-top:0.4rem"><span class="pill teal">healthcheck</span><span class="pill teal">paridad 0,0</span><span class="pill teal">AppTest OK</span></p>
         </div>
       </div>
-      <div class="callout" style="margin-top:0.45rem">Misma predicción en host y contenedor: <strong>24,6 %</strong> para 86 años. Es un prototipo funcional, no un sistema clínico listo para producción.</div>
+      <div class="callout takeaway" style="margin-top:0.45rem">Misma predicción en host y contenedor: <strong>24,6 %</strong> para 86 años. Es un prototipo funcional, no un sistema clínico listo para producción.</div>
       <aside class="notes">La app está en localhost:8501. Si falla la demo, usar las capturas y el PDF de respaldo.</aside>
     </section>
 
@@ -674,7 +691,11 @@
           </ul>
         </div>
       </div>
-      <p class="big-idea">El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X). Un monitor de entrada no reemplaza la calibración supervisada.</p>
+      <div class="card" style="margin-top:0.4rem">
+        <h3>Qué significa</h3>
+        <p>El monitor de P(X) es necesario, pero no suficiente. La calibración supervisada y el análisis por subgrupo cubren el cambio de P(Y|X).</p>
+      </div>
+      <p class="small" style="margin-top:auto">Demo: localhost:8501 · Gracias.</p>
       <aside class="notes">Cerrar con la idea central y pasar a preguntas. Tener a mano el umbral 0,05 y las limitaciones.</aside>
     </section>
 
