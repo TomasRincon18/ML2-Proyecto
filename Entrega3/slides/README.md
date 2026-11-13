@@ -17,6 +17,16 @@ Abre `index.html` en el navegador. Funciona sin internet porque reveal.js y las 
 - PDF de respaldo: `slides.pdf` (12 páginas).
 - Guion y reparto: `guion.md`.
 
+## Regenerar figuras
+
+Desde `Entrega3`:
+
+```bash
+python src/build_slide_figures.py
+```
+
+El script escribe las figuras en `slides/assets/`.
+
 ## Reparto
 
 - Ailyn: diapositivas 1 a 7.

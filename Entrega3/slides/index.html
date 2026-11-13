@@ -7,306 +7,670 @@
   <link rel="stylesheet" href="reveal/reveal.css">
   <link rel="stylesheet" href="reveal/white.css">
   <style>
+    *, *::before, *::after { box-sizing: border-box; }
     :root {
-      --azul: #1d3557;
-      --azul-claro: #457b9d;
-      --verde: #2a9d8f;
-      --rojo: #e63946;
-      --gris: #495057;
-      --fondo: #f8f9fa;
+      --navy: #0b1d3a;
+      --blue: #1d3557;
+      --teal: #2a9d8f;
+      --coral: #e63946;
+      --gold: #f4a261;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --paper: #f7f9fc;
+      --line: #e5e7eb;
     }
-    .reveal { font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif; }
-    .reveal h1, .reveal h2, .reveal h3 { color: var(--azul); text-transform: none; letter-spacing: 0; }
-    .reveal h1 { font-size: 2.1em; line-height: 1.1; }
-    .reveal h2 { font-size: 1.55em; margin-bottom: 0.35em; }
-    .reveal h3 { font-size: 1.05em; margin-bottom: 0.2em; }
-    .reveal p, .reveal li { font-size: 0.78em; line-height: 1.35; color: #212529; }
-    .reveal ul { margin-left: 1em; }
-    .reveal li { margin-bottom: 0.25em; }
-    .reveal .slide-number { color: var(--gris); font-size: 0.55em; }
-    .title-slide h1 { color: #ffffff; font-size: 2.0em; line-height: 1.12; }
-    .title-slide h2 { color: #dbe9f4; font-size: 1.05em; font-weight: 400; }
-    .title-slide p { color: #dbe9f4; font-size: 0.68em; }
-    .title-slide .meta { font-size: 0.6em; color: #b8d0e4; }
-    .subtitle { color: var(--azul-claro); font-weight: 600; }
-    .cols { display: flex; gap: 1.6rem; align-items: flex-start; }
-    .col { flex: 1; }
-    .metric-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.7rem; margin-top: 0.6rem; }
-    .metric { background: var(--fondo); border-left: 4px solid var(--verde); padding: 0.5rem 0.7rem; }
-    .metric .v { font-size: 1.55em; font-weight: 700; color: var(--azul); line-height: 1; }
-    .metric .l { font-size: 0.62em; color: var(--gris); margin-top: 0.15rem; }
-    .fig { max-height: 360px; max-width: 100%; border-radius: 5px; }
-    .fig-sm { max-height: 285px; max-width: 100%; border-radius: 5px; }
-    .two-figs { display: flex; gap: 0.8rem; align-items: flex-start; }
-    .two-figs img { max-height: 300px; max-width: 49%; }
-    .small { font-size: 0.65em; color: var(--gris); }
-    .tag { display: inline-block; background: var(--rojo); color: #fff; padding: 0.08em 0.45em; border-radius: 4px; font-size: 0.62em; font-weight: 700; vertical-align: middle; }
-    .highlight { color: var(--rojo); font-weight: 700; }
-    .box { background: var(--fondo); border: 1px solid #dee2e6; border-radius: 6px; padding: 0.55rem 0.75rem; }
-    .box h3 { margin-top: 0; }
-    .pill { display: inline-block; border: 1px solid var(--azul-claro); color: var(--azul); border-radius: 999px; padding: 0.1em 0.55em; font-size: 0.65em; margin: 0.1em 0.15em 0.1em 0; }
-    .eq { font-family: "DejaVu Sans Mono", monospace; font-size: 0.8em; background: #eef3f7; padding: 0.25em 0.5em; border-radius: 4px; }
-    .reveal .progress { color: var(--verde); }
-    .reveal .controls { color: var(--azul); }
-    .dense p, .dense li { font-size: 0.68em; }
-    .dense h2 { font-size: 1.32em; }
+
+    .reveal {
+      font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+    }
+    .reveal .slides > section {
+      background:
+        radial-gradient(1000px 520px at 100% 0%, rgba(42, 157, 143, 0.07), transparent 62%),
+        radial-gradient(800px 460px at 0% 100%, rgba(230, 57, 70, 0.05), transparent 62%),
+        #fbfcfe;
+      padding: 0.1em 0.15em;
+      text-align: left;
+      box-sizing: border-box;
+    }
+    .reveal .slides > section.title-slide,
+    .reveal .slides > section.closing-slide {
+      background: transparent;
+    }
+    .reveal h1, .reveal h2, .reveal h3 {
+      color: var(--navy);
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 800;
+    }
+    .reveal h2 {
+      font-size: 1.30em;
+      line-height: 1.08;
+      margin: 0 0 0.25em 0;
+      max-width: 100%;
+    }
+    .reveal p, .reveal li {
+      font-size: 0.58em;
+      line-height: 1.30;
+      color: var(--ink);
+    }
+    .reveal ul {
+      margin: 0.1em 0 0 1.1em;
+    }
+    .reveal li {
+      margin-bottom: 0.28em;
+    }
+    .reveal strong { color: var(--navy); }
+    .reveal em { color: inherit; }
+    .reveal .slide-number {
+      font-size: 0.46em;
+      color: #94a3b8;
+      background: transparent;
+    }
+    .reveal .progress { height: 4px; color: var(--teal); }
+    .reveal .controls { color: var(--teal); }
+
+    .kicker {
+      display: flex;
+      align-items: center;
+      gap: 0.55em;
+      font-size: 0.42em;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--teal);
+      font-weight: 800;
+      margin-bottom: 0.25em;
+    }
+    .kicker::before {
+      content: "";
+      width: 2.3em;
+      height: 3px;
+      background: var(--teal);
+      border-radius: 3px;
+    }
+    .lead {
+      font-size: 0.72em;
+      color: var(--muted);
+      line-height: 1.30;
+    }
+    .small {
+      font-size: 0.57em;
+      color: var(--muted);
+      line-height: 1.35;
+    }
+    .card {
+      background: rgba(255, 255, 255, 0.82);
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.5rem 0.65rem;
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.05);
+    }
+    .card.accent { border-left: 4px solid var(--teal); }
+    .card.alert { border-left: 4px solid var(--coral); }
+    .card.soft { background: rgba(241, 245, 249, 0.72); }
+    .card h3 {
+      font-size: 0.68em;
+      margin: 0 0 0.25em 0;
+      color: var(--navy);
+    }
+    .card p, .card li { font-size: 0.54em; }
+    .callout {
+      background: linear-gradient(90deg, rgba(42, 157, 143, 0.12), rgba(42, 157, 143, 0.02));
+      border-left: 4px solid var(--teal);
+      border-radius: 10px;
+      padding: 0.4rem 0.6rem;
+      font-size: 0.52em;
+      line-height: 1.32;
+      color: var(--ink);
+    }
+    .callout.alert {
+      background: linear-gradient(90deg, rgba(230, 57, 70, 0.12), rgba(230, 57, 70, 0.02));
+      border-left-color: var(--coral);
+    }
+    .callout.gold {
+      background: linear-gradient(90deg, rgba(244, 162, 97, 0.16), rgba(244, 162, 97, 0.03));
+      border-left-color: var(--gold);
+    }
+    .split {
+      display: flex;
+      gap: 0.9rem;
+      align-items: center;
+    }
+    .split.top { align-items: flex-start; }
+    .left { flex: 1.1; min-width: 0; }
+    .right { flex: 0.9; min-width: 0; }
+    .three > *, .two > *, .metric-grid > * { min-width: 0; }
+    .three {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+    }
+    .two {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.55rem;
+    }
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+    }
+    .metric {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0.4rem 0.55rem;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    }
+    .metric .v {
+      display: block;
+      font-size: 1.20em;
+      font-weight: 800;
+      color: var(--navy);
+      line-height: 1;
+    }
+    .metric .l {
+      display: block;
+      font-size: 0.46em;
+      color: var(--muted);
+      margin-top: 0.18em;
+      line-height: 1.25;
+    }
+    .metric.teal { border-top: 3px solid var(--teal); }
+    .metric.coral { border-top: 3px solid var(--coral); }
+    .metric.gold { border-top: 3px solid var(--gold); }
+    .fig-card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.35rem;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.07);
+    }
+    .fig-card img {
+      display: block;
+      width: 100%;
+      border-radius: 9px;
+    }
+    .fig-300 { max-height: 260px; object-fit: contain; }
+    .fig-330 { max-height: 290px; object-fit: contain; }
+    .fig-350 { max-height: 310px; object-fit: contain; }
+    .pill {
+      display: inline-block;
+      border: 1px solid rgba(29, 53, 87, 0.28);
+      color: var(--blue);
+      border-radius: 999px;
+      padding: 0.12em 0.55em;
+      font-size: 0.56em;
+      font-weight: 700;
+      margin: 0.08em 0.12em 0.08em 0;
+      background: rgba(255, 255, 255, 0.6);
+    }
+    .pill.teal {
+      border-color: rgba(42, 157, 143, 0.45);
+      color: #0f766e;
+      background: rgba(42, 157, 143, 0.08);
+    }
+    .pill.coral {
+      border-color: rgba(230, 57, 70, 0.4);
+      color: #b91c1c;
+      background: rgba(230, 57, 70, 0.07);
+    }
+    .icon {
+      width: 28px;
+      height: 28px;
+      stroke: var(--teal);
+      stroke-width: 1.8;
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    .icon.coral { stroke: var(--coral); }
+    .icon.gold { stroke: var(--gold); }
+
+    .title-slide {
+      color: #fff;
+      padding: 0.2em 0.4em !important;
+    }
+    .title-slide::after {
+      content: "";
+      position: absolute;
+      width: 52vw;
+      height: 52vw;
+      right: -16vw;
+      top: -22vw;
+      background: radial-gradient(circle, rgba(42, 157, 143, 0.38), transparent 66%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .title-slide > * { position: relative; z-index: 1; }
+    .title-slide h1 {
+      color: #fff;
+      font-size: 1.85em;
+      line-height: 1.08;
+      margin: 0.25em 0 0.2em 0;
+    }
+    .title-slide .lead {
+      color: #cfe3f2;
+      font-size: 0.82em;
+    }
+    .title-slide .meta {
+      color: #9fb8cd;
+      font-size: 0.58em;
+      line-height: 1.5;
+      margin-top: 0.65em;
+    }
+    .badge {
+      display: inline-block;
+      background: var(--teal);
+      color: #fff;
+      font-size: 0.50em;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0.25em 0.65em;
+      border-radius: 999px;
+      margin-right: 0.4em;
+    }
+    .badge.ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #dbe9f4;
+    }
+    .hero-stats {
+      display: flex;
+      gap: 1.4em;
+      margin-top: 0.9em;
+      padding-top: 0.6em;
+      border-top: 1px solid rgba(255, 255, 255, 0.18);
+    }
+    .hero-stats .v {
+      display: block;
+      font-size: 1.35em;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+    .hero-stats .l {
+      display: block;
+      font-size: 0.50em;
+      color: #9fb8cd;
+      margin-top: 0.2em;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .timeline {
+      display: flex;
+      gap: 0.55rem;
+      align-items: stretch;
+      margin-top: 0.35rem;
+    }
+    .step {
+      flex: 1;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 0.5rem 0.6rem;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+      position: relative;
+    }
+    .step .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.55em;
+      height: 1.55em;
+      border-radius: 50%;
+      background: var(--navy);
+      color: #fff;
+      font-size: 0.62em;
+      font-weight: 800;
+      margin-bottom: 0.35em;
+    }
+    .step h3 {
+      font-size: 0.70em;
+      margin: 0 0 0.15em 0;
+    }
+    .step p {
+      font-size: 0.50em;
+      color: var(--muted);
+      margin: 0;
+    }
+    .step.active { border-top: 3px solid var(--teal); }
+
+    .bars { display: grid; gap: 0.45rem; margin-top: 0.5rem; }
+    .bar-row { display: flex; align-items: center; gap: 0.5rem; }
+    .bar-label { width: 3.4em; font-size: 0.58em; color: var(--muted); font-weight: 700; }
+    .bar-track { flex: 1; height: 12px; background: #e9eef5; border-radius: 999px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 999px; background: var(--teal); }
+    .bar-val { width: 3.3em; text-align: right; font-size: 0.60em; font-weight: 800; color: var(--navy); }
+
+    .browser {
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.12);
+      background: #fff;
+    }
+    .browser-bar {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 11px;
+      background: #f1f3f5;
+      border-bottom: 1px solid var(--line);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot.red { background: #ff5f57; }
+    .dot.yellow { background: #febc2e; }
+    .dot.green { background: #28c840; }
+    .browser img { display: block; width: 100%; }
+
+    .closing-slide {
+      color: #fff;
+      padding: 0.2em 0.4em !important;
+    }
+    .closing-slide::after {
+      content: "";
+      position: absolute;
+      width: 46vw;
+      height: 46vw;
+      left: -14vw;
+      bottom: -20vw;
+      background: radial-gradient(circle, rgba(42, 157, 143, 0.30), transparent 67%);
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .closing-slide > * { position: relative; z-index: 1; }
+    .closing-slide h2, .closing-slide h3 { color: #fff; }
+    .closing-slide p, .closing-slide li { color: #dbe9f4; }
+    .closing-slide .kicker { color: #8fd3c7; }
+    .closing-slide .kicker::before { background: #8fd3c7; }
+    .closing-slide .card {
+      background: rgba(255, 255, 255, 0.07);
+      border-color: rgba(255, 255, 255, 0.16);
+      box-shadow: none;
+    }
+    .closing-slide .card h3 { color: #fff; }
+    .closing-slide .card p, .closing-slide .card li { color: #dbe9f4; }
+    .closing-slide .big-idea {
+      font-size: 0.82em;
+      font-weight: 700;
+      color: #fff;
+      line-height: 1.28;
+      border-left: 4px solid #8fd3c7;
+      padding-left: 0.6em;
+      margin-top: 0.35em;
+    }
+    .closing-slide .card { padding: 0.45rem 0.6rem; }
+    .closing-slide .small { font-size: 0.5em; }
+    .closing-slide .small { color: #9fb8cd; }
   </style>
 </head>
 <body>
 <div class="reveal">
   <div class="slides">
 
-    <section class="title-slide" data-background-color="#1d3557">
-      <h2 class="subtitle" style="color:#b8d0e4">Machine Learning II, Proyecto Integrador</h2>
+    <section class="title-slide" data-background-color="#0b1d3a">
+      <span class="badge">Entrega final</span><span class="badge ghost">Machine Learning II</span>
       <h1>Detección de <em>population drift</em> en la predicción de gravedad clínica de COVID-19</h1>
-      <p>Ailyn Sofía Gómez Rodríguez · Juan Tomás Rincón Pinzón</p>
-      <p class="meta">Docente: Wilmer Darío Pineda Ríos<br>Universidad Externado de Colombia · 2026</p>
-      <p class="meta">Del monitor OCSVM al modelo calibrado y desplegado</p>
-      <aside class="notes">Saludo y encuadre: el proyecto empezó con un OCSVM para detectar drift y terminó mostrando que el problema real era otro.</aside>
+      <p class="lead">Del monitor OCSVM al modelo calibrado y desplegado</p>
+      <p class="meta">Ailyn Sofía Gómez Rodríguez · Juan Tomás Rincón Pinzón<br>Docente: Wilmer Darío Pineda Ríos · Universidad Externado de Colombia · 2026</p>
+      <div class="hero-stats">
+        <div><span class="v">0,190</span><span class="l">AUC-PR 2022</span></div>
+        <div><span class="v">99 %</span><span class="l">inliers OCSVM</span></div>
+        <div><span class="v">300k</span><span class="l">casos analizados</span></div>
+      </div>
+      <aside class="notes">Abrir con el contraste: el monitor de la población de entrada no fue suficiente. El problema real fue el cambio de prevalencia y de P(Y|X).</aside>
     </section>
 
     <section>
-      <h2>El problema: cambió la población o cambió el riesgo</h2>
-      <div class="cols">
-        <div class="col">
-          <div class="box">
-            <h3>Tres cambios distintos</h3>
-            <ul>
-              <li><strong>P(X):</strong> cambian las covariables de entrada.</li>
-              <li><strong>P(Y|X):</strong> cambia la relación entre perfil y desenlace.</li>
-              <li><strong>P(Y):</strong> cambia la prevalencia.</li>
-            </ul>
-          </div>
+      <div class="kicker">01 / El problema</div>
+      <h2>Cambió la población o cambió el riesgo</h2>
+      <div class="three" style="margin-top:0.55rem">
+        <div class="card accent">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 19V5m0 14h16M7 15l3-4 3 2 4-6"/></svg>
+          <h3>P(X): covariables</h3>
+          <p>Quién llega: edad, sexo, ciudad, fuente de contagio.</p>
         </div>
-        <div class="col">
-          <div class="box">
-            <h3>Lo que pasó en Colombia</h3>
-            <p>La población de entrada se mantuvo estable. La prevalencia cayó de <strong>2,82 %</strong> a <strong>1,10 %</strong> y también cambió la relación riesgo-covariables.</p>
-            <p class="small">El monitor de P(X) no podía ver ninguno de esos dos cambios.</p>
-          </div>
+        <div class="card accent">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M3 12h4l2-6 4 12 2-6h6"/></svg>
+          <h3>P(Y|X): relación</h3>
+          <p>Qué tan grave se pone un paciente con ese perfil.</p>
+        </div>
+        <div class="card accent">
+          <svg class="icon" viewBox="0 0 24 24"><path d="M4 18V9m5 9V5m5 13v-7m5 7V3"/></svg>
+          <h3>P(Y): prevalencia</h3>
+          <p>Qué proporción de los casos termina en gravedad.</p>
         </div>
       </div>
-      <p class="small">Jones &amp; Farrow (2025) proponen el OCSVM como monitor de la población de entrada. El proyecto lo lleva al INS y añade la capa supervisada que falta.</p>
-      <aside class="notes">No confundir drift de covariables con cambio de prevalencia o de P(Y|X). Esa distinción ordena toda la presentación.</aside>
+      <div class="callout gold" style="margin-top:0.65rem">
+        En Colombia, <strong>P(X) se mantuvo estable</strong>. La prevalencia cayó de <strong>2,82 %</strong> a <strong>1,10 %</strong> y también cambió P(Y|X).
+      </div>
+      <aside class="notes">No confundir covariate drift con prevalence drift o concept shift. Esa distinción ordena toda la presentación.</aside>
     </section>
 
     <section>
-      <h2>El artículo base</h2>
-      <div class="cols">
-        <div class="col">
-          <h3>Jones &amp; Farrow (2025)</h3>
-          <p><em>One-class SVM for detecting population drift in deployed ML medical diagnostics</em>, Scientific Reports.</p>
-          <ul>
-            <li>OCSVM con kernel RBF, <span class="eq">ν = 0,01</span>.</li>
-            <li>Se entrena con Wisconsin Breast Cancer.</li>
-            <li>Aprende el soporte de P(X): inlier u outlier.</li>
-          </ul>
+      <div class="kicker">02 / Artículo base</div>
+      <h2>El OCSVM aprende el soporte de P(X)</h2>
+      <div class="split top">
+        <div class="left">
+          <p><strong>Jones &amp; Farrow (2025)</strong>, Scientific Reports. <em>One-class SVM for detecting population drift in deployed ML medical diagnostics</em>.</p>
+          <p>OCSVM con kernel RBF y <span class="pill">ν = 0,01</span> entrenado con Wisconsin Breast Cancer. Si un caso cae fuera del soporte aprendido, se marca como posible drift.</p>
         </div>
-        <div class="col">
-          <div class="box">
-            <h3>Supuestos y límite</h3>
-            <ul>
-              <li>La población de entrenamiento representa el uso previsto.</li>
-              <li>Un outlier en X es una señal de drift clínicamente relevante.</li>
-              <li>No usa Y: no detecta cambios de prevalencia ni de P(Y|X).</li>
-            </ul>
+        <div class="right">
+          <div class="card soft">
+            <h3>Cómo funciona</h3>
+            <p><span class="pill teal">P(X) de referencia</span> → frontera de decisión</p>
+            <p><span class="pill teal">Inlier</span> dentro del soporte</p>
+            <p><span class="pill coral">Outlier</span> posible cambio poblacional</p>
+          </div>
+          <div class="callout alert" style="margin-top:0.5rem">
+            No usa Y: no ve P(Y) ni P(Y|X).
           </div>
         </div>
       </div>
-      <p class="small">El proyecto reproduce el método y lo contrasta con datos reales del INS.</p>
-      <aside class="notes">Dejar claro desde el inicio que el OCSVM es un monitor de P(X), no un clasificador ni un monitor de calibración.</aside>
+      <aside class="notes">Describir el método en dos frases. El foco no es la matemática del OCSVM, sino su alcance.</aside>
     </section>
 
     <section>
-      <h2>Datos: 6,39 millones de casos del INS</h2>
-      <div class="cols">
-        <div class="col">
-          <ul>
-            <li>Fuente: <em>Casos positivos de COVID-19 en Colombia</em>, datos.gov.co, recurso <code>gt2j-8ykr</code>.</li>
-            <li>6.390.844 registros crudos.</li>
-            <li>6.311.405 después de depurar nulos y limitar a 2020-2022.</li>
-            <li>300.000 en la muestra final: 100.000 por ola.</li>
-          </ul>
+      <div class="kicker">03 / Datos</div>
+      <h2>6,39 millones de casos del INS</h2>
+      <div class="metric-grid" style="margin-top:0.4rem">
+        <div class="metric teal"><span class="v">6,39 M</span><span class="l">registros crudos del INS</span></div>
+        <div class="metric teal"><span class="v">6,31 M</span><span class="l">después de depurar nulos y 2020-2022</span></div>
+        <div class="metric teal"><span class="v">300k</span><span class="l">muestra final: 100k por ola</span></div>
+      </div>
+      <div class="split" style="margin-top:0.55rem">
+        <div class="left">
+          <div class="bars">
+            <div class="bar-row"><span class="bar-label">2020</span><span class="bar-track"><span class="bar-fill" style="width:100%"></span></span><span class="bar-val">2,82 %</span></div>
+            <div class="bar-row"><span class="bar-label">2021</span><span class="bar-track"><span class="bar-fill" style="width:82%"></span></span><span class="bar-val">2,33 %</span></div>
+            <div class="bar-row"><span class="bar-label">2022</span><span class="bar-track"><span class="bar-fill" style="width:39%; background:#e63946"></span></span><span class="bar-val">1,10 %</span></div>
+          </div>
+          <p class="small" style="margin-top:0.35rem">Prevalencia de gravedad por ola.</p>
         </div>
-        <div class="col">
-          <div class="metric-grid" style="grid-template-columns: 1fr;">
-            <div class="metric"><div class="v">2,82 %</div><div class="l">prevalencia de gravedad 2020</div></div>
-            <div class="metric"><div class="v">2,33 %</div><div class="l">2021, Delta</div></div>
-            <div class="metric"><div class="v">1,10 %</div><div class="l">2022, Ómicron</div></div>
+        <div class="right">
+          <div class="card soft">
+            <h3>Variables del modelo</h3>
+            <p><span class="pill">edad</span><span class="pill">sexo</span><span class="pill">ciudad</span><span class="pill">fuente de contagio</span></p>
           </div>
         </div>
       </div>
-      <p class="small">Predictores: edad, sexo, ciudad y fuente de contagio. Objetivo: <code>grave</code> (fallecido, grave o UCI).</p>
       <aside class="notes">La caída de prevalencia es el dato que explica por qué las métricas tradicionales se ven peor en 2022.</aside>
     </section>
 
     <section>
-      <h2>Protocolo: entrenar, calibrar, evaluar</h2>
-      <div class="cols">
-        <div class="col">
-          <div class="box">
-            <h3>Partición temporal</h3>
-            <p><span class="pill">2020 entrena</span><span class="pill">2021 calibra</span><span class="pill">2022 evalúa</span></p>
-            <p class="small">La separación ocurre antes de cualquier transformación.</p>
-          </div>
+      <div class="kicker">04 / Protocolo</div>
+      <h2>Entrenar, calibrar, evaluar</h2>
+      <div class="timeline">
+        <div class="step active">
+          <span class="num">1</span>
+          <h3>2020 entrena</h3>
+          <p>100.000 casos. Variante ancestral y población sin vacunación.</p>
         </div>
-        <div class="col">
-          <div class="box">
-            <h3>Pipeline sin fuga</h3>
-            <p><code>StandardScaler</code> + <code>OneHotEncoder(drop='first')</code> + regresión logística.</p>
-            <p>Las transformaciones se ajustan solo con el train de cada partición. El test se usa una vez.</p>
-          </div>
+        <div class="step active">
+          <span class="num">2</span>
+          <h3>2021 calibra</h3>
+          <p>20.000 casos holdout. Ajuste de Platt y umbral.</p>
+        </div>
+        <div class="step active">
+          <span class="num">3</span>
+          <h3>2022 evalúa</h3>
+          <p>100.000 casos. Ómicron y vacunación. Fuera del entrenamiento.</p>
         </div>
       </div>
-      <p class="small">El modelo final reentrena con 2020 + 80 % de 2021 y calibra con el 20 % restante. 2022 queda fuera.</p>
-      <aside class="notes">Si preguntan por fuga: la partición temporal y el Pipeline dentro de la CV son la respuesta.</aside>
+      <div class="card" style="margin-top:0.65rem">
+        <h3>Pipeline sin fuga</h3>
+        <p><span class="pill">StandardScaler</span><span class="pill">OneHotEncoder</span><span class="pill">LogisticRegression</span></p>
+        <p class="small">Las transformaciones se ajustan solo con el train de cada partición. El test se usa una vez.</p>
+      </div>
+      <aside class="notes">Si preguntan por fuga: partición temporal antes de cualquier transformación y Pipeline dentro de la validación.</aside>
     </section>
 
     <section>
-      <h2>Réplica del OCSVM: funciona como monitor de P(X)</h2>
-      <div class="cols">
-        <div class="col">
-          <h3>Wisconsin</h3>
-          <p>La réplica reproduce la tendencia del artículo: a más ruido, más solapamiento con la frontera y menos outliers detectados.</p>
-          <h3>Colombia</h3>
-          <ul>
-            <li>2020 test: <strong>98,96 %</strong> inliers.</li>
-            <li>2021: <strong>99,08 %</strong>.</li>
-            <li>2022: <strong>97,99 %</strong>.</li>
-          </ul>
+      <div class="kicker">05 / Réplica del OCSVM</div>
+      <h2>El monitor funciona, pero vigila P(X)</h2>
+      <div class="split top">
+        <div class="left">
+          <div class="fig-card"><img class="fig-330" src="assets/monitor_slide.png" alt="Inliers OCSVM e Isolation Forest"></div>
         </div>
-        <div class="col">
-          <div class="box">
-            <h3>Drift simulado</h3>
-            <p>Con 30 % de ruido, el OCSVM baja a <strong>72 %</strong> de inliers. Isolation Forest se queda en <strong>100 %</strong>.</p>
-            <p class="small">El monitor detecta el corrimiento controlado, pero no el cambio real de prevalencia.</p>
+        <div class="right">
+          <div class="card accent">
+            <h3>Qué muestra</h3>
+            <p>En 2020-2022, entre <strong>98 % y 99 %</strong> de inliers.</p>
+            <p>Sim 30 %: OCSVM <strong>72 %</strong>, Isolation Forest <strong>100&nbsp;%</strong>.</p>
+          </div>
+          <div class="callout alert" style="margin-top:0.5rem">
+            P(X) estable no significa que el clasificador siga funcionando.
           </div>
         </div>
       </div>
-      <aside class="notes">Aquí está el hallazgo de la fase 2: P(X) estable, pero el clasificador se degrada por otra razón.</aside>
+      <aside class="notes">El OCSVM cumple su función. El problema aparece cuando queremos usarlo para explicar la caída de desempeño del clasificador.</aside>
     </section>
 
     <section>
-      <h2>Modelo final: reentreno + calibración Platt</h2>
-      <div class="metric-grid">
-        <div class="metric"><div class="v">0,190</div><div class="l">AUC-PR en 2022</div></div>
-        <div class="metric"><div class="v">0,923</div><div class="l">ROC-AUC</div></div>
-        <div class="metric"><div class="v">0,0119</div><div class="l">Brier</div></div>
-        <div class="metric"><div class="v">0,0238</div><div class="l">ECE</div></div>
-        <div class="metric"><div class="v">0,147</div><div class="l">F1 con umbral 0,091</div></div>
-        <div class="metric"><div class="v">0,786</div><div class="l">recall con umbral 0,091</div></div>
+      <div class="kicker">06 / Modelo final</div>
+      <h2>Reentreno + Platt, umbral 0,0909</h2>
+      <div class="metric-grid" style="margin-top:0.35rem">
+        <div class="metric teal"><span class="v">0,190</span><span class="l">AUC-PR en 2022</span></div>
+        <div class="metric teal"><span class="v">0,923</span><span class="l">ROC-AUC</span></div>
+        <div class="metric teal"><span class="v">0,0119</span><span class="l">Brier</span></div>
+        <div class="metric gold"><span class="v">0,0238</span><span class="l">ECE</span></div>
+        <div class="metric coral"><span class="v">0,147</span><span class="l">F1 con umbral 0,091</span></div>
+        <div class="metric coral"><span class="v">0,786</span><span class="l">recall con umbral 0,091</span></div>
       </div>
-      <div class="cols" style="margin-top:0.7rem">
-        <div class="col">
-          <p><strong>Entrenamiento:</strong> 2020 completo + 80 % de 2021 (180.000 casos).</p>
-          <p><strong>Calibración:</strong> Platt sobre el 20 % de 2021 (20.000 casos).</p>
+      <div class="two" style="margin-top:0.55rem">
+        <div class="card">
+          <h3>Entrenamiento y calibración</h3>
+          <p>2020 completo + 80 % de 2021: <strong>180.000 casos</strong>.</p>
+          <p>Platt sobre el 20 % restante de 2021: <strong>20.000 casos</strong>.</p>
         </div>
-        <div class="col">
-          <p><strong>Umbral:</strong> <span class="eq">t* = 1 / (1 + 10) = 0,0909</span></p>
-          <p class="small">Costo de un falso negativo diez veces mayor que el de un falso positivo.</p>
+        <div class="card">
+          <h3>Umbral de decisión</h3>
+          <p><span class="pill teal">t* = 1 / (1 + 10) = 0,0909</span></p>
+          <p class="small">Costo FN/FP = 10: el falso negativo pesa diez veces más.</p>
         </div>
       </div>
-      <aside class="notes">La mejora frente a solo calibrar 2021 es pequeña, pero el bootstrap muestra que es consistente.</aside>
+      <div class="callout" style="margin-top:0.45rem">Mejor AUC-PR y F1 que las alternativas; el bootstrap confirma la mejora.</div>
+      <aside class="notes">La mejora es pequeña, pero consistente. No vender un salto grande: es un ajuste fino y honesto.</aside>
     </section>
 
-    <section class="dense">
-      <h2>Calibración: el modelo crudo no se puede leer como riesgo</h2>
-      <div class="cols">
-        <div class="col" style="flex:1.25">
-          <img class="fig-sm" src="assets/calibracion_final_2022.png" alt="Curvas de fiabilidad en 2022">
+    <section>
+      <div class="kicker">07 / Calibración</div>
+      <h2>El modelo crudo no se puede leer como riesgo</h2>
+      <div class="split top">
+        <div class="left">
+          <div class="fig-card"><img class="fig-330" src="assets/calibracion_slide.png" alt="Curvas de fiabilidad 2022"></div>
         </div>
-        <div class="col">
-          <ul>
-            <li>Modelo crudo: media <strong>0,287</strong> con prevalencia <strong>0,011</strong>.</li>
-            <li>Platt de origen: Brier 0,0126, ECE 0,025.</li>
-            <li>EM falló: 0 en 2021, sobreestimó en 2022.</li>
-            <li>Beta mejoró Brier, pero bajó F1. Se descartó.</li>
+        <div class="right">
+          <div class="two" style="gap:0.45rem">
+            <div class="card soft"><span class="metric"><span class="v" style="font-size:1.25em">0,287</span><span class="l">media cruda en 2022</span></span></div>
+            <div class="card soft"><span class="metric"><span class="v" style="font-size:1.25em">0,011</span><span class="l">prevalencia real</span></span></div>
+          </div>
+          <ul style="margin-top:0.45rem">
+            <li>Platt: Brier 0,0126, ECE 0,025.</li>
+            <li>EM falló en 2021 y 2022.</li>
           </ul>
-          <p class="small">Brier skill -0,098: el valor está en el ranking.</p>
+          <div class="callout alert" style="margin-top:0.4rem">
+            Brier skill -0,098: el valor está en el ranking, no en batir la tasa base.
+          </div>
         </div>
       </div>
       <aside class="notes">No decir que el modelo está perfectamente calibrado. El decil superior sigue sobreestimado.</aside>
     </section>
 
     <section>
-      <h2>Interpretabilidad: la edad manda</h2>
-      <div class="cols">
-        <div class="col">
-          <img class="fig" src="assets/shap_importance_ci.png" alt="Importancia SHAP con IC 95 %">
-        </div>
-        <div class="col">
-          <img class="fig" src="assets/pdp_edad.png" alt="Dependencia parcial de la edad">
-        </div>
+      <div class="kicker">08 / Interpretabilidad</div>
+      <h2>La edad manda</h2>
+      <div class="two" style="margin-top:0.3rem">
+        <div class="fig-card"><img class="fig-300" src="assets/shap_slide.png" alt="Importancia SHAP"></div>
+        <div class="fig-card"><img class="fig-300" src="assets/pdp_slide.png" alt="Dependencia parcial de la edad"></div>
       </div>
-      <div class="cols" style="margin-top:0.4rem">
-        <div class="col">
-          <p><strong>Edad:</strong> 1,663 |SHAP|, 4,7 veces la siguiente variable.</p>
-        </div>
-        <div class="col">
-          <p><strong>PDP:</strong> el umbral 0,091 se cruza hacia los 69 años; a los 80 el riesgo medio es 0,213.</p>
-        </div>
+      <div class="callout" style="margin-top:0.4rem">
+        Edad: 1,66 |SHAP|, 4,7× la siguiente. Umbral a los ~69 años; 0,213 a los 80.
       </div>
       <aside class="notes">Caso local: 86 años, hombre, otros municipios, riesgo 0,482. La edad aporta casi toda la explicación.</aside>
     </section>
 
     <section>
-      <h2>Errores y utilidad: un modelo etario</h2>
-      <div class="two-figs">
-        <img src="assets/errores_edad.png" alt="Errores por edad">
-        <img src="assets/decision_curve.png" alt="Curva de decisión">
+      <div class="kicker">09 / Errores y utilidad</div>
+      <h2>Un modelo etario</h2>
+      <div class="two" style="margin-top:0.2rem">
+        <div class="fig-card"><img class="fig-300" src="assets/errores_slide.png" alt="Errores por edad"></div>
+        <div class="fig-card"><img class="fig-300" src="assets/decision_slide.png" alt="Curva de decisión"></div>
       </div>
-      <ul style="margin-top:0.5rem">
-        <li>Recall <strong>0</strong> en menores de 60; <strong>0,684</strong> en 60-79; <strong>1,000</strong> en 80+.</li>
-        <li>Beneficio neto <strong>-0,0010</strong> con umbral 0,091; <strong>+0,0010</strong> con 0,05.</li>
-        <li>Sirve para triage de mayores de 60. No sirve para descartar gravedad en jóvenes.</li>
-      </ul>
-      <aside class="notes">Este es el resultado más incómodo y el que hay que defender con honestidad. La app advierte y permite bajar el umbral.</aside>
+      <div class="callout alert" style="margin-top:0.45rem">
+        Recall 0 en <60; 0,684 en 60-79; 1,000 en 80+. Triage para mayores de 60, no tamizaje. Con 0,05 el beneficio neto es positivo.
+      </div>
+      <aside class="notes">Este es el resultado más incómodo. Decirlo sin rodeos y explicar la advertencia de la app.</aside>
     </section>
 
     <section>
-      <h2>Despliegue: Streamlit + Docker</h2>
-      <div class="cols">
-        <div class="col" style="flex:1.1">
-          <img class="fig-sm" src="assets/streamlit_prediccion_alto.png" alt="Aplicación Streamlit">
+      <div class="kicker">10 / Despliegue</div>
+      <h2>Streamlit + Docker</h2>
+      <div class="split top">
+        <div class="left">
+          <div class="browser">
+            <div class="browser-bar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span></div>
+            <img class="fig-300" src="assets/app_slide.png" alt="Aplicación Streamlit">
+          </div>
         </div>
-        <div class="col">
-          <ul>
-            <li>Tres pestañas: predicción individual, lote + monitor, ficha del modelo.</li>
-            <li>Riesgo calibrado, advertencia por edad y control de umbral.</li>
-            <li>Explicación en dos capas: what-if en probabilidad y SHAP en log-odds.</li>
-            <li>Docker con healthcheck, paridad 0,0 y AppTest OK.</li>
-            <li>Predicción en contenedor: 24,6&nbsp;%, igual que en host.</li>
-          </ul>
+        <div class="right">
+          <div class="card accent"><h3>Predicción individual</h3><p>Riesgo, advertencia por edad, umbral y explicación.</p></div>
+          <div class="card accent" style="margin-top:0.35rem"><h3>Lote + monitor</h3><p>CSV, métricas y monitor OCSVM.</p></div>
+          <div class="card accent" style="margin-top:0.35rem"><h3>Ficha del modelo</h3><p>Métricas, SHAP y limitaciones.</p></div>
+          <p style="margin-top:0.4rem"><span class="pill teal">healthcheck</span><span class="pill teal">paridad 0,0</span><span class="pill teal">AppTest OK</span></p>
         </div>
       </div>
-      <aside class="notes">La app está en localhost:8501. Si la demo falla, mostrar las capturas de respaldo.</aside>
+      <div class="callout" style="margin-top:0.45rem">Misma predicción en host y contenedor: <strong>24,6 %</strong> para 86 años.</div>
+      <aside class="notes">La app está en localhost:8501. Si falla la demo, usar las capturas y el PDF de respaldo.</aside>
     </section>
 
-    <section>
-      <h2>Limitaciones y cierre</h2>
-      <div class="cols">
-        <div class="col">
+    <section class="closing-slide" data-background-color="#0b1d3a">
+      <div class="kicker">11 / Cierre</div>
+      <h2>Vigilar las covariables no basta</h2>
+      <div class="two" style="margin-top:0.45rem">
+        <div class="card">
           <h3>Limitaciones</h3>
           <ul>
             <li>2022 no es un test ciego.</li>
             <li>Faltan comorbilidades, vacunación y variante.</li>
-            <li>Modelo etario, con Brier skill negativo.</li>
-            <li>El OCSVM solo vigila P(X).</li>
+            <li>Modelo etario y Brier skill negativo.</li>
           </ul>
         </div>
-        <div class="col">
+        <div class="card">
           <h3>Proyección</h3>
           <ul>
             <li>Holdout temporal ciego.</li>
             <li>Más covariables y modelos no lineales calibrados.</li>
-            <li>Monitoreo de P(Y|X) y de calibración.</li>
-            <li>MLOps: registro, alertas y reentrenamiento.</li>
+            <li>Monitoreo de P(Y|X) y MLOps.</li>
           </ul>
         </div>
       </div>
-      <div class="box" style="margin-top:0.7rem">
-        <p><strong>Idea central:</strong> vigilar las covariables no basta para saber si el clasificador sigue funcionando.</p>
-      </div>
+      <p class="big-idea">El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X).</p>
       <aside class="notes">Cerrar con la idea central y pasar a preguntas. Tener a mano el umbral 0,05 y las limitaciones.</aside>
     </section>
 
@@ -318,9 +682,10 @@
     hash: true,
     slideNumber: 'c/t',
     transition: 'slide',
+    backgroundTransition: 'fade',
     width: 1280,
     height: 720,
-    margin: 0.035,
+    margin: 0.03,
     controls: true,
     progress: true
   });

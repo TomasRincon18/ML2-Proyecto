@@ -4,7 +4,9 @@
 
 - `slides/index.html`: deck reveal.js de 12 diapositivas, con reveal.js y
   imágenes locales.
-- `slides/assets/`: figuras y captura de la app usadas en el deck.
+- `slides/assets/`: figuras específicas de diapositiva, con estilo y tipografía propios.
+- `src/build_slide_figures.py`: genera calibración, SHAP, PDP, errores, decisión, monitor y captura de la app para el deck.
+- Rediseño visual: portada oscura, kickers, tarjetas, timeline, métricas grandes, figuras enmarcadas y cierre.
 - `slides/reveal/`: reveal.js y tema, sin dependencia de CDN.
 - `slides/slides.pdf`: respaldo de 12 páginas.
 - `slides/guion.md`: guion por diapositiva, reparto, tiempos, preguntas
@@ -26,8 +28,9 @@
 - Sin errores de JavaScript ni recursos faltantes.
 - Imágenes locales, sin CDN.
 - PDF de respaldo: 12 páginas.
-- Capturas del deck en `docs/evidencias/deck_*.png`.
+- El deck completo está en `slides/slides.pdf`.
 - La diapositiva 8 se ajustó para que no se cortara el contenido.
+- El deck se probó desde `file://` y desde un servidor local, sin errores ni recursos faltantes.
 
 ## Checklist de rúbrica
 
