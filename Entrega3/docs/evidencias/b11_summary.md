@@ -12,7 +12,7 @@
 ## PDF
 
 - `informe/informe_final.md` compilado con WeasyPrint.
-- `informe/informe_final.html` y `informe/informe_final.pdf`.
+- `informe/informe_final.pdf` (el HTML se regenera con `python src/build_pdf.py`).
 - Páginas: **5**.
 - Tamaño: 884 KB.
 - Cuerpo: introducción a conclusión en las primeras 4 páginas; referencias y
