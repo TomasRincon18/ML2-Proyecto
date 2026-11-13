@@ -22,3 +22,7 @@ env/
 # Archivos de sistema
 .DS_Store
 Thumbs.db
+
+# Notas locales de estudio (no se suben al repositorio)
+/Resumen_General_Proyecto.md
+/Conceptos_Tecnicos.md
