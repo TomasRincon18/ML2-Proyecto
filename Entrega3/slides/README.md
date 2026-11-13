@@ -1,6 +1,6 @@
 # Deck de sustentación
 
-Abre `index.html` en el navegador. Funciona sin internet porque reveal.js y las imágenes están en la carpeta.
+Abre `index.html` en el navegador. Es la versión actual del deck y funciona sin internet porque reveal.js y las imágenes están en la carpeta. `slides.pdf` queda como respaldo.
 
 ## Controles
 
@@ -29,6 +29,6 @@ El script escribe las figuras en `slides/assets/`.
 
 ## Reparto
 
-- Ailyn: diapositivas 1 a 7.
-- Juan Tomás: diapositivas 8 a 12.
+- Ailyn: diapositivas 1 a 6.
+- Juan Tomás: diapositivas 7 a 12.
 - Los dos deben poder responder por el proyecto completo.

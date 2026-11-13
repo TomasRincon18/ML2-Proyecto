@@ -8,50 +8,70 @@
 
 | Tramo | Diapositivas | Quién | Tiempo |
 |---|---|---|---|
-| Apertura, problema, artículo y datos | 1-4 | Ailyn | 4 min |
+| Portada, problema, artículo y datos | 1-4 | Ailyn | 4 min |
 | Protocolo, réplica OCSVM y modelo final | 5-7 | Ailyn | 3 min |
 | Calibración, interpretabilidad y errores | 8-10 | Juan Tomás | 3 min |
 | Despliegue, limitaciones y cierre | 11-12 | Juan Tomás | 2 min |
 
 ## Diapositiva 1. Portada
 
-Abrir con el problema, no con la lista de integrantes:
+No empezar leyendo la lista de integrantes. Abrir con el contraste:
 
-> "El proyecto empezó con un monitor para detectar si la población de pacientes cambia. Al final, el hallazgo fue otro: la población de entrada se mantuvo estable, pero cambió la prevalencia y cambió la relación entre perfil y gravedad. Eso obligó a calibrar y a interpretar el modelo de otra manera."
+> "El proyecto empezó con un monitor para detectar si cambia la población de pacientes. Al final, el hallazgo fue otro: la población de entrada se mantuvo estable, pero cambió la prevalencia y cambió la relación entre perfil y gravedad."
+
+Señalar las tres cifras de la portada: AUC-PR 0,190, 99 % de inliers del OCSVM y 300.000 casos analizados.
+
+**Transición:** "Para entender por qué esas tres cifras conviven, hay que separar tres tipos de cambio."
 
 ## Diapositiva 2. El problema
 
-Explicar los tres cambios con un ejemplo:
+Explicar las tres tarjetas con un ejemplo:
 
-> "P(X) es quién llega: edad, sexo, ciudad. P(Y|X) es qué tan grave se pone ese paciente. P(Y) es qué proporción de casos graves hay. Un monitor de P(X) solo ve lo primero."
+> "P(X) es quién llega: edad, sexo, ciudad, fuente de contagio. P(Y|X) es qué tan grave se pone ese paciente. P(Y) es qué proporción de los casos termina en gravedad."
 
-Cerrar con la pregunta que ordena la presentación: "¿Qué cambió y qué herramienta lo puede detectar?"
+Cerrar con la frase del recuadro:
 
-## Diapositiva 3. El artículo
+> "En Colombia, P(X) se mantuvo estable. La prevalencia cayó de 2,82 % a 1,10 % y también cambió P(Y|X). El monitor de P(X) no podía ver esos cambios."
 
-Resumir el método en dos frases y marcar el límite:
+**Transición:** "Ese es justamente el alcance del artículo que tomamos como base."
 
-> "Jones y Farrow entrenan un OCSVM con la población de referencia. Si un paciente cae fuera del soporte, lo marcan como posible drift. El monitor no usa la etiqueta, así que no puede ver cambios de prevalencia ni de P(Y|X)."
+## Diapositiva 3. El artículo base
 
-No entrar en detalles matemáticos del OCSVM salvo que pregunten.
+Resumir el método en dos frases:
+
+> "Jones y Farrow entrenan un OCSVM con la población de referencia. Si un caso cae fuera del soporte, lo marcan como posible drift. No usan la etiqueta, así que no pueden ver cambios de prevalencia ni de P(Y|X)."
+
+No entrar en la matemática del kernel salvo que pregunten. La tarjeta de la derecha resume el flujo: P(X) de referencia, inlier, outlier.
+
+**Transición:** "Con ese método, pasamos a los datos del INS."
 
 ## Diapositiva 4. Datos
 
 > "Trabajamos con 6,39 millones de registros del INS. Después de depurar quedaron 6,31 millones. Para que el cómputo fuera viable y el balance temporal fuera estricto, tomamos 100.000 casos por ola."
 
-Señalar la caída de prevalencia: 2,82 %, 2,33 % y 1,10 %. Es el dato que explica el resto.
+Señalar las barras de prevalencia: 2,82 %, 2,33 % y 1,10 %. Es el dato que explica por qué las métricas tradicionales se ven peor en 2022.
+
+Mencionar las cuatro variables y que se excluyó tipo de atención por fuga de información.
+
+**Transición:** "La partición temporal es la que evita que el modelo vea el futuro."
 
 ## Diapositiva 5. Protocolo
 
-> "2020 entrena, 2021 calibra y 2022 evalúa. La separación es temporal y ocurre antes de cualquier transformación. El Pipeline ajusta el escalamiento y el one-hot solo con el train de cada partición."
+> "2020 entrena, 2021 calibra y 2022 evalúa. La separación ocurre antes de cualquier transformación. El Pipeline ajusta el escalamiento y el one-hot solo con el train de cada partición."
 
-Mencionar que el modelo final usa 2020 más el 80 % de 2021, y que el 20 % restante de 2021 se usa para calibrar. 2022 no se toca.
+Aclarar que el modelo final usa 2020 completo más el 80 % de 2021, y que el 20 % restante de 2021 se usa para calibrar. 2022 no se toca.
+
+**Transición:** "Con ese protocolo, primero probamos si el OCSVM detectaba el cambio."
 
 ## Diapositiva 6. Réplica del OCSVM
 
-> "La réplica en Wisconsin reproduce la tendencia del artículo. En Colombia, el OCSVM clasifica como inliers al 98,96 % de 2020 test, al 99,08 % de 2021 y al 97,99 % de 2022. Es decir, P(X) se mantuvo dentro del soporte."
+> "En 2020 test, 2021 y 2022 el OCSVM deja entre 98 % y 99 % de inliers. La población de entrada se mantiene dentro del soporte."
 
-Contrastar con la simulación: "Con 30 % de ruido, los inliers bajan a 72 %; Isolation Forest se queda en 100 %. El monitor sí detecta el drift controlado, pero no el cambio real de prevalencia."
+Contrastar con la simulación:
+
+> "Con 30 % de ruido, los inliers bajan a 72 %. Isolation Forest se queda en 100 %. El monitor sí detecta el drift controlado, pero no el cambio real de prevalencia."
+
+**Transición:** "Entonces el problema no estaba en P(X). Estaba en el clasificador y en su calibración."
 
 ## Diapositiva 7. Modelo final
 
@@ -59,37 +79,63 @@ Contrastar con la simulación: "Con 30 % de ruido, los inliers bajan a 72 %; Iso
 
 Leer solo las métricas principales: AUC-PR 0,190, ROC-AUC 0,923, Brier 0,0119, F1 0,147. Aclarar que el AUC-PR es 17,3 veces la prevalencia.
 
+**Transición:** "El siguiente problema era que el modelo crudo no se podía leer como riesgo."
+
 ## Diapositiva 8. Calibración
 
 > "El modelo crudo predice una media de 0,287 cuando la prevalencia es 0,011. El ranking sirve, pero el número no se puede leer como riesgo. Platt corrige casi toda esa descalibración."
 
-Mencionar que EM falló: "En 2021 colapsó a 0 y en 2022 sobreestimó. La suposición de prior shift puro no se sostiene." Beta calibration mejoró Brier, pero bajó F1 y no corrigió el decil superior.
+Mencionar que EM falló en 2021 y 2022. Beta calibration mejoró Brier, pero bajó F1 y no corrigió el decil superior. Se mantuvo Platt.
+
+Cerrar con el recuadro:
+
+> "El Brier skill es -0,098: el valor está en el ranking y en la decisión, no en batir la tasa base."
+
+**Transición:** "Si el modelo ordena bien, la siguiente pregunta es qué variable manda."
 
 ## Diapositiva 9. Interpretabilidad
 
-> "La edad pesa 4,7 veces más que la siguiente variable. El PDP cruza el umbral hacia los 69 años y a los 80 el riesgo medio es 0,213."
+> "La edad pesa 1,66 en |SHAP|, 4,7 veces más que la siguiente variable. El bootstrap confirma que la dominancia es estable."
+
+Señalar el PDP:
+
+> "El umbral 0,091 se cruza hacia los 69 años. A los 80 el riesgo medio es 0,213."
 
 Usar un caso: "Un hombre de 86 años de otros municipios tiene riesgo 0,482; la edad aporta casi toda la explicación."
 
+**Transición:** "Pero un modelo que depende tanto de la edad tiene un costo en los grupos jóvenes."
+
 ## Diapositiva 10. Errores y utilidad
 
-Aquí está el punto más delicado. Decirlo sin rodeos:
+Decirlo sin rodeos:
 
 > "Al umbral 0,091 el modelo no detecta ningún caso grave menor de 60 años. La sensibilidad global viene de los mayores de 60. La curva de decisión muestra que el umbral está en el borde: con 0,05 el beneficio neto se vuelve positivo."
 
-Conclusión práctica: "Es una herramienta de triage para mayores de 60, no un tamizaje poblacional."
+Conclusión práctica:
+
+> "Es una herramienta de triage para mayores de 60, no un tamizaje poblacional."
+
+**Transición:** "Aun con esa limitación, el sistema se puede usar y auditar."
 
 ## Diapositiva 11. Despliegue
 
 > "La app tiene tres pestañas: predicción individual, lote con monitor y ficha del modelo. La predicción individual muestra el riesgo calibrado, una advertencia por edad, el control de umbral y dos explicaciones: what-if en probabilidad y SHAP en log-odds."
 
-Mencionar Docker: "El contenedor pasó el healthcheck, la paridad fue 0,0 y la predicción de 86 años coincidió con la app en host: 24,6 %."
+Mencionar Docker:
 
-## Diapositiva 12. Limitaciones y cierre
+> "El contenedor pasó el healthcheck, la paridad fue 0,0 y la predicción de 86 años coincidió con la app en host: 24,6 %."
+
+**Transición:** "Cierro con lo que el proyecto deja y lo que falta."
+
+## Diapositiva 12. Cierre
 
 > "2022 no es un test ciego. Faltan comorbilidades, vacunación y variante. El modelo es etario y el Brier skill es negativo. El OCSVM solo vigila P(X)."
 
-Cerrar con la idea central: "Vigilar las covariables no basta para saber si el clasificador sigue funcionando."
+Proyección: holdout temporal ciego, más covariables, modelos no lineales calibrados, monitoreo de P(Y|X) y MLOps.
+
+Cerrar con la idea del recuadro:
+
+> "El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X)."
 
 Pasar a la demo o a preguntas.
 
@@ -125,17 +171,17 @@ Semilla 42, versiones fijadas, Pipeline, artefacto con caso de referencia, parid
 2. Pestaña 1: edad 86, mujer, Bogotá, comunitaria. Mostrar riesgo y decisión.
 3. Cambiar edad a 30. Mostrar la advertencia.
 4. Pestaña 3: mostrar métricas, calibración y la tabla por edad.
-5. Si la demo falla, usar las capturas de `docs/evidencias/`.
+5. Si la demo falla, usar las capturas de `docs/evidencias/` o el PDF del deck.
 
 ## Checklist de rúbrica
 
 | Criterio | Evidencia |
 |---|---|
-| Modelo final y reproducción | Sección 1, Cuadro 1, `model_final.joblib` |
-| Interpretación | Sección 3, figuras SHAP y PDP, Cuadro 3 |
-| Despliegue | Sección 4, app, Docker, `streamlit_docker.png` |
-| Calidad y limitaciones | Sección 5, Brier skill, modelo etario, 2022 no ciego |
-| Comunicación | Informe de 5 páginas, deck y este guion |
+| Modelo final y reproducción | Diapositiva 7, informe §1, `model_final.joblib` |
+| Interpretación | Diapositiva 9, informe §3, SHAP y PDP |
+| Despliegue | Diapositiva 11, app, Docker, capturas |
+| Calidad y limitaciones | Diapositiva 12, informe §5, Brier skill, modelo etario |
+| Comunicación | Informe de 5 páginas, deck de 12 diapositivas y este guion |
 
 ## Ensayo
 

@@ -24,11 +24,14 @@
       font-family: "DejaVu Sans", "Segoe UI", Arial, sans-serif;
       color: var(--ink);
     }
-    .reveal .slides > section {
+    html, body, .reveal, .reveal .backgrounds {
       background:
-        radial-gradient(1000px 520px at 100% 0%, rgba(42, 157, 143, 0.07), transparent 62%),
-        radial-gradient(800px 460px at 0% 100%, rgba(230, 57, 70, 0.05), transparent 62%),
+        radial-gradient(1200px 620px at 100% 0%, rgba(42, 157, 143, 0.08), transparent 62%),
+        radial-gradient(900px 520px at 0% 100%, rgba(230, 57, 70, 0.06), transparent 62%),
         #fbfcfe;
+    }
+    .reveal .slides > section {
+      background: transparent;
       padding: 0.1em 0.15em;
       text-align: left;
       box-sizing: border-box;
@@ -685,7 +688,7 @@
     backgroundTransition: 'fade',
     width: 1280,
     height: 720,
-    margin: 0.03,
+    margin: 0,
     controls: true,
     progress: true
   });

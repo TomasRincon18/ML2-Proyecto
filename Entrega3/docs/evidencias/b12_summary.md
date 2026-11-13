@@ -17,10 +17,9 @@
 
 | Tramo | Diapositivas | Quién |
 |---|---|---|
-| Problema, artículo, datos y protocolo | 1-5 | Ailyn |
-| OCSVM, modelo final y calibración | 6-8 | Ailyn |
-| Interpretabilidad, errores y despliegue | 9-11 | Juan Tomás |
-| Limitaciones y cierre | 12 | Juan Tomás |
+| Problema, artículo, datos, protocolo y OCSVM | 1-6 | Ailyn |
+| Modelo final, calibración, interpretabilidad y errores | 7-10 | Juan Tomás |
+| Despliegue y cierre | 11-12 | Juan Tomás |
 
 ## Verificación
 
@@ -28,7 +27,7 @@
 - Sin errores de JavaScript ni recursos faltantes.
 - Imágenes locales, sin CDN.
 - PDF de respaldo: 12 páginas.
-- El deck completo está en `slides/slides.pdf`.
+- El deck actualizado está en `slides/index.html`; `slides/slides.pdf` queda como respaldo.
 - La diapositiva 8 se ajustó para que no se cortara el contenido.
 - El deck se probó desde `file://` y desde un servidor local, sin errores ni recursos faltantes.
 
