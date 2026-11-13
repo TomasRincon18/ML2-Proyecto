@@ -35,6 +35,8 @@ Cerrar con la frase del recuadro:
 
 **Transición:** "Ese es justamente el alcance del artículo que tomamos como base."
 
+**Interpretación:** La distinción importa porque el OCSVM solo vigila P(X). Si el problema está en P(Y) o P(Y|X), el monitor no lo va a ver.
+
 ## Diapositiva 3. El artículo base
 
 Resumir el método en dos frases:
@@ -44,6 +46,8 @@ Resumir el método en dos frases:
 No entrar en la matemática del kernel salvo que pregunten. La tarjeta de la derecha resume el flujo: P(X) de referencia, inlier, outlier.
 
 **Transición:** "Con ese método, pasamos a los datos del INS."
+
+**Interpretación:** El OCSVM es un monitor de la población de entrada, no un diagnóstico. Su valor está en certificar que el caso nuevo se parece a la población de referencia.
 
 ## Diapositiva 4. Datos
 
@@ -55,6 +59,8 @@ Mencionar las cuatro variables y que se excluyó tipo de atención por fuga de i
 
 **Transición:** "La partición temporal es la que evita que el modelo vea el futuro."
 
+**Interpretación:** La caída de prevalencia no es un detalle: cambia la lectura de F1 y precisión. Por eso el proyecto separa covariate drift de prevalence drift.
+
 ## Diapositiva 5. Protocolo
 
 > "2020 entrena, 2021 calibra y 2022 evalúa. La separación ocurre antes de cualquier transformación. El Pipeline ajusta el escalamiento y el one-hot solo con el train de cada partición."
@@ -62,6 +68,8 @@ Mencionar las cuatro variables y que se excluyó tipo de atención por fuga de i
 Aclarar que el modelo final usa 2020 completo más el 80 % de 2021, y que el 20 % restante de 2021 se usa para calibrar. 2022 no se toca.
 
 **Transición:** "Con ese protocolo, primero probamos si el OCSVM detectaba el cambio."
+
+**Interpretación:** La partición temporal y el Pipeline son la defensa metodológica. 2022 no es ciego, y se declara.
 
 ## Diapositiva 6. Réplica del OCSVM
 
@@ -73,6 +81,8 @@ Contrastar con la simulación:
 
 **Transición:** "Entonces el problema no estaba en P(X). Estaba en el clasificador y en su calibración."
 
+**Interpretación:** El monitor cumple su función, pero no explica la caída del clasificador. Ese es el puente hacia la capa supervisada.
+
 ## Diapositiva 7. Modelo final
 
 > "El modelo final es una regresión logística reentrenada con 2020 y el 80 % de 2021, calibrada con Platt sobre el 20 % restante. El umbral 0,0909 sale de asumir que un falso negativo cuesta diez veces más que un falso positivo."
@@ -80,6 +90,8 @@ Contrastar con la simulación:
 Leer solo las métricas principales: AUC-PR 0,190, ROC-AUC 0,923, Brier 0,0119, F1 0,147. Aclarar que el AUC-PR es 17,3 veces la prevalencia.
 
 **Transición:** "El siguiente problema era que el modelo crudo no se podía leer como riesgo."
+
+**Interpretación:** El AUC-PR no es alto, pero el modelo es consistente. La mejora frente a las alternativas es pequeña y el bootstrap la respalda.
 
 ## Diapositiva 8. Calibración
 
@@ -93,6 +105,8 @@ Cerrar con el recuadro:
 
 **Transición:** "Si el modelo ordena bien, la siguiente pregunta es qué variable manda."
 
+**Interpretación:** El modelo ordena bien, pero no promete riesgo absoluto exacto. El Brier skill negativo y el decil superior lo recuerdan.
+
 ## Diapositiva 9. Interpretabilidad
 
 > "La edad pesa 1,66 en |SHAP|, 4,7 veces más que la siguiente variable. El bootstrap confirma que la dominancia es estable."
@@ -104,6 +118,8 @@ Señalar el PDP:
 Usar un caso: "Un hombre de 86 años de otros municipios tiene riesgo 0,482; la edad aporta casi toda la explicación."
 
 **Transición:** "Pero un modelo que depende tanto de la edad tiene un costo en los grupos jóvenes."
+
+**Interpretación:** La edad explica casi todo. El modelo es casi un score etario; las demás variables ajustan, no cambian la historia.
 
 ## Diapositiva 10. Errores y utilidad
 
@@ -117,6 +133,8 @@ Conclusión práctica:
 
 **Transición:** "Aun con esa limitación, el sistema se puede usar y auditar."
 
+**Interpretación:** El umbral prioriza no perder graves, pero deja fuera a los jóvenes. Es triage, no tamizaje.
+
 ## Diapositiva 11. Despliegue
 
 > "La app tiene tres pestañas: predicción individual, lote con monitor y ficha del modelo. La predicción individual muestra el riesgo calibrado, una advertencia por edad, el control de umbral y dos explicaciones: what-if en probabilidad y SHAP en log-odds."
@@ -126,6 +144,8 @@ Mencionar Docker:
 > "El contenedor pasó el healthcheck, la paridad fue 0,0 y la predicción de 86 años coincidió con la app en host: 24,6 %."
 
 **Transición:** "Cierro con lo que el proyecto deja y lo que falta."
+
+**Interpretación:** El despliegue demuestra reproducibilidad y coherencia, no producción clínica.
 
 ## Diapositiva 12. Cierre
 
@@ -138,6 +158,8 @@ Cerrar con la idea del recuadro:
 > "El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X)."
 
 Pasar a la demo o a preguntas.
+
+**Interpretación:** La lección es que P(X) no basta. El monitor de entrada y la calibración supervisada son complementarios.
 
 ## Preguntas probables
 

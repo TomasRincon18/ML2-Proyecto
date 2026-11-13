@@ -346,8 +346,8 @@
     .bar-row { display: flex; align-items: center; gap: 0.5rem; }
     .bar-label { width: 3.4em; font-size: 0.58em; color: var(--muted); font-weight: 700; }
     .bar-track { flex: 1; height: 12px; background: #e9eef5; border-radius: 999px; overflow: hidden; }
-    .bar-fill { height: 100%; border-radius: 999px; background: var(--teal); }
-    .bar-val { width: 3.3em; text-align: right; font-size: 0.60em; font-weight: 800; color: var(--navy); }
+    .bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--teal); }
+    .bar-val { width: 4.2em; white-space: nowrap; text-align: right; font-size: 0.60em; font-weight: 800; color: var(--navy); }
 
     .browser {
       border-radius: 16px;
@@ -471,7 +471,7 @@
             <p><span class="pill coral">Outlier</span> posible cambio poblacional</p>
           </div>
           <div class="callout alert" style="margin-top:0.5rem">
-            No usa Y: no ve P(Y) ni P(Y|X).
+            No usa Y: no ve P(Y) ni P(Y|X). Es un monitor, no un diagnóstico.
           </div>
         </div>
       </div>
@@ -493,12 +493,13 @@
             <div class="bar-row"><span class="bar-label">2021</span><span class="bar-track"><span class="bar-fill" style="width:82%"></span></span><span class="bar-val">2,33 %</span></div>
             <div class="bar-row"><span class="bar-label">2022</span><span class="bar-track"><span class="bar-fill" style="width:39%; background:#e63946"></span></span><span class="bar-val">1,10 %</span></div>
           </div>
-          <p class="small" style="margin-top:0.35rem">Prevalencia de gravedad por ola.</p>
+          <p class="small" style="margin-top:0.35rem">Prevalencia de gravedad por ola. La caída explica por qué las métricas tradicionales empeoran en 2022.</p>
         </div>
         <div class="right">
           <div class="card soft">
             <h3>Variables del modelo</h3>
             <p><span class="pill">edad</span><span class="pill">sexo</span><span class="pill">ciudad</span><span class="pill">fuente de contagio</span></p>
+            <p class="small">Objetivo: <strong>grave</strong>. Se excluyó tipo de atención por fuga de información.</p>
           </div>
         </div>
       </div>
@@ -528,7 +529,7 @@
       <div class="card" style="margin-top:0.65rem">
         <h3>Pipeline sin fuga</h3>
         <p><span class="pill">StandardScaler</span><span class="pill">OneHotEncoder</span><span class="pill">LogisticRegression</span></p>
-        <p class="small">Las transformaciones se ajustan solo con el train de cada partición. El test se usa una vez.</p>
+        <p class="small">Las transformaciones se ajustan solo con el train de cada partición. El test se usa una vez. 2022 no es ciego: ya se observó en la fase 2.</p>
       </div>
       <aside class="notes">Si preguntan por fuga: partición temporal antes de cualquier transformación y Pipeline dentro de la validación.</aside>
     </section>
@@ -547,7 +548,7 @@
             <p>Sim 30 %: OCSVM <strong>72 %</strong>, Isolation Forest <strong>100&nbsp;%</strong>.</p>
           </div>
           <div class="callout alert" style="margin-top:0.5rem">
-            P(X) estable no significa que el clasificador siga funcionando.
+            P(X) estable no significa que el clasificador siga funcionando. El monitor certifica la entrada, pero no explica la caída del clasificador.
           </div>
         </div>
       </div>
@@ -577,7 +578,7 @@
           <p class="small">Costo FN/FP = 10: el falso negativo pesa diez veces más.</p>
         </div>
       </div>
-      <div class="callout" style="margin-top:0.45rem">Mejor AUC-PR y F1 que las alternativas; el bootstrap confirma la mejora.</div>
+      <div class="callout" style="margin-top:0.45rem">Mejor AUC-PR y F1 que las alternativas; el bootstrap confirma la mejora. No es un salto grande: el valor está en la consistencia y la calibración.</div>
       <aside class="notes">La mejora es pequeña, pero consistente. No vender un salto grande: es un ajuste fino y honesto.</aside>
     </section>
 
@@ -598,7 +599,7 @@
             <li>EM falló en 2021 y 2022.</li>
           </ul>
           <div class="callout alert" style="margin-top:0.4rem">
-            Brier skill -0,098: el valor está en el ranking, no en batir la tasa base.
+            Brier skill -0,098: el modelo ordena bien, pero no promete riesgo absoluto exacto. El valor está en el ranking y la decisión.
           </div>
         </div>
       </div>
@@ -613,7 +614,7 @@
         <div class="fig-card"><img class="fig-300" src="assets/pdp_slide.png" alt="Dependencia parcial de la edad"></div>
       </div>
       <div class="callout" style="margin-top:0.4rem">
-        Edad: 1,66 |SHAP|, 4,7× la siguiente. Umbral a los ~69 años; 0,213 a los 80.
+        Edad: 1,66 |SHAP|, 4,7× la siguiente. Umbral a los ~69 años; 0,213 a los 80. El modelo es casi un score etario: las demás variables ajustan, no cambian la historia.
       </div>
       <aside class="notes">Caso local: 86 años, hombre, otros municipios, riesgo 0,482. La edad aporta casi toda la explicación.</aside>
     </section>
@@ -626,7 +627,7 @@
         <div class="fig-card"><img class="fig-300" src="assets/decision_slide.png" alt="Curva de decisión"></div>
       </div>
       <div class="callout alert" style="margin-top:0.45rem">
-        Recall 0 en <60; 0,684 en 60-79; 1,000 en 80+. Triage para mayores de 60, no tamizaje. Con 0,05 el beneficio neto es positivo.
+        Recall 0 en <60; 0,684 en 60-79; 1,000 en 80+. Triage para mayores de 60, no tamizaje. La limitación principal es no detectar jóvenes; con 0,05 el beneficio neto es positivo.
       </div>
       <aside class="notes">Este es el resultado más incómodo. Decirlo sin rodeos y explicar la advertencia de la app.</aside>
     </section>
@@ -648,7 +649,7 @@
           <p style="margin-top:0.4rem"><span class="pill teal">healthcheck</span><span class="pill teal">paridad 0,0</span><span class="pill teal">AppTest OK</span></p>
         </div>
       </div>
-      <div class="callout" style="margin-top:0.45rem">Misma predicción en host y contenedor: <strong>24,6 %</strong> para 86 años.</div>
+      <div class="callout" style="margin-top:0.45rem">Misma predicción en host y contenedor: <strong>24,6 %</strong> para 86 años. Es un prototipo funcional, no un sistema clínico listo para producción.</div>
       <aside class="notes">La app está en localhost:8501. Si falla la demo, usar las capturas y el PDF de respaldo.</aside>
     </section>
 
@@ -673,7 +674,7 @@
           </ul>
         </div>
       </div>
-      <p class="big-idea">El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X).</p>
+      <p class="big-idea">El OCSVM vigila P(X). El cambio que importaba estaba en P(Y) y P(Y|X). Un monitor de entrada no reemplaza la calibración supervisada.</p>
       <aside class="notes">Cerrar con la idea central y pasar a preguntas. Tener a mano el umbral 0,05 y las limitaciones.</aside>
     </section>
 
